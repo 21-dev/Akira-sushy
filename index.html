@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akira Sushi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg: #080504;
+            --ink: #130b09;
+            --line: rgba(255,255,255,.1);
+            --gold: #f2cf74;
+            --red: #d81e1f;
+            --red-dark: #821112;
+        }
+
+        * { scrollbar-width: thin; scrollbar-color: #3a332b #080807; }
+
+        body {
+            background:
+                radial-gradient(circle at 82% 12%, rgba(216,30,31,.18), transparent 23rem),
+                radial-gradient(circle at 12% 24%, rgba(242,207,116,.1), transparent 20rem),
+                radial-gradient(circle at 72% 86%, rgba(216,30,31,.08), transparent 26rem),
+                linear-gradient(180deg, #170d0b 0%, var(--bg) 48%, #030202 100%);
+            color: #fff7e3;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: .28;
+            background-image:
+                radial-gradient(circle at 12px 12px, rgba(216,30,31,.2) 0 2px, transparent 3px),
+                linear-gradient(rgba(255,255,255,.024) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.016) 1px, transparent 1px);
+            background-size: 180px 160px, 52px 52px, 52px 52px;
+            mask-image: linear-gradient(to bottom, black, transparent 88%);
+        }
+
+        .toro-border { border-bottom: 1px solid var(--line); }
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn .35s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        .glass-nav {
+            background: rgba(5,5,5,.82);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(18px);
+        }
+
+        .akira-logo {
+            color: var(--gold);
+            font-family: Georgia, "Times New Roman", serif;
+            letter-spacing: .16em;
+            text-shadow: 0 0 24px rgba(242,207,116,.18);
+        }
+
+        .akira-logo::before {
+            content: "";
+            display: inline-block;
+            width: 1.65rem;
+            height: 1.65rem;
+            margin-right: .55rem;
+            border: 5px solid var(--red);
+            border-right-color: transparent;
+            border-radius: 999px;
+            transform: rotate(-24deg) translateY(.25rem);
+            box-shadow: 0 0 22px rgba(216,30,31,.32);
+        }
+
+        .jp-accent {
+            color: var(--gold);
+            text-shadow: 0 0 18px rgba(242,207,116,.14);
+        }
+
+        .premium-hero {
+            position: relative;
+            overflow: hidden;
+            min-height: 520px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .premium-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(90deg, rgba(5,5,5,.94) 0%, rgba(5,5,5,.72) 35%, rgba(5,5,5,.12) 78%),
+                url("https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1600&q=85") center/cover;
+            transform: scale(1.02);
+        }
+
+        .premium-hero::after {
+            content: "";
+            position: absolute;
+            inset: auto 0 0;
+            height: 42%;
+            background:
+                radial-gradient(circle at 88% 20%, rgba(216,30,31,.28) 0 1.5px, transparent 2.5px),
+                linear-gradient(to bottom, transparent, var(--bg));
+            background-size: 110px 90px, auto;
+        }
+
+        .premium-card {
+            background: linear-gradient(145deg, rgba(28,18,15,.93), rgba(8,6,5,.97));
+            border: 1px solid var(--line);
+            box-shadow: 0 24px 70px rgba(0,0,0,.4), inset 0 1px 0 rgba(242,207,116,.08);
+        }
+
+        .premium-input {
+            background: rgba(18,10,9,.9);
+            border: 1px solid rgba(255,255,255,.11);
+            color: #fff7eb;
+            border-radius: 999px;
+            outline: none;
+        }
+
+        .premium-input:focus {
+            border-color: rgba(242,207,116,.72);
+            box-shadow: 0 0 0 4px rgba(216,30,31,.1);
+        }
+
+        .premium-button {
+            background: linear-gradient(135deg, var(--red), var(--red-dark));
+            color: white;
+            box-shadow: 0 14px 34px rgba(216,30,31,.28);
+        }
+
+        .premium-button:hover {
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+        }
+
+        .menu-card {
+            background: linear-gradient(180deg, rgba(25,15,13,.92), rgba(8,6,5,.98));
+            border: 1px solid rgba(255,255,255,.08);
+            box-shadow: 0 22px 60px rgba(0,0,0,.28);
+        }
+
+        .menu-card:hover {
+            border-color: rgba(242,207,116,.48);
+            transform: translateY(-4px);
+            box-shadow: 0 26px 80px rgba(0,0,0,.46), 0 0 40px rgba(216,30,31,.09);
+        }
+
+        .dish-glow {
+            box-shadow: 0 0 0 1px rgba(242,207,116,.18), 0 18px 50px rgba(216,30,31,.2);
+        }
+
+        .brush-panel {
+            position: relative;
+        }
+
+        .brush-panel::before {
+            content: "";
+            position: absolute;
+            inset: -12% auto auto -8%;
+            width: 18rem;
+            height: 18rem;
+            border: 24px solid rgba(216,30,31,.7);
+            border-right-color: transparent;
+            border-bottom-color: rgba(216,30,31,.18);
+            border-radius: 999px;
+            transform: rotate(-22deg);
+            filter: blur(.2px);
+            opacity: .55;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col selection:bg-red-700/40">
+
+    <nav class="px-5 py-4 glass-nav flex justify-between items-center sticky top-0 z-50">
+        <h1 class="akira-logo text-lg sm:text-xl font-black uppercase cursor-pointer" onclick="navigate('home')" id="nav-logo">AKIRA SUSHI</h1>
+        <div class="flex gap-3 sm:gap-6 text-[11px] sm:text-xs font-bold tracking-[0.14em] sm:tracking-[0.18em] uppercase">
+            <button onclick="navigate('home')" class="hover:text-red-300 transition">Home</button>
+            <button onclick="navigate('menu')" class="hover:text-red-300 transition">Cardápio</button>
+            <button onclick="navigate('cart')" class="hover:text-red-300 transition flex items-center gap-1">
+                Pedido <span id="cart-badge" class="bg-red-700 text-white rounded-full px-2 py-0.5 text-xs hidden">0</span>
+            </button>
+            <button onclick="showAdminLogin()" class="hover:text-red-300 transition text-stone-500">ADM</button>
+        </div>
+    </nav>
+
+    <section id="page-home" class="flex-1 w-full fade-in">
+        <div class="premium-hero px-6">
+            <div class="brush-panel relative z-10 max-w-6xl mx-auto pt-20 md:pt-28 pb-24">
+                <div id="store-status-badge" class="inline-block px-4 py-1 rounded-full text-sm font-bold mb-8"></div>
+                <p class="jp-accent text-xs font-bold tracking-[0.35em] uppercase mb-4">明楽 Sushi House</p>
+                <h2 class="text-5xl md:text-7xl font-black leading-[0.95] max-w-2xl tracking-tight uppercase">AKIRA SUSHI</h2>
+                <p class="text-stone-300 max-w-xl mt-6 leading-relaxed">Sushi autoral, combinados frescos e uma experiência inspirada na força do sumi-e japonês.</p>
+                <button onclick="navigate('menu')" class="premium-button mt-8 px-7 py-3 rounded-full text-xs font-black tracking-[0.2em] uppercase transition">Ver cardápio</button>
+            </div>
+        </div>
+
+        <div class="px-6 -mt-16 relative z-20">
+            <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-5 pb-12">
+                <div class="premium-card rounded-lg p-6">
+                    <h3 class="text-sm font-black tracking-[0.28em] mb-4 uppercase text-red-200">Contatos</h3>
+                    <p class="text-stone-300" id="display-contact">WhatsApp: Carregando...</p>
+                    <p class="text-stone-400 mt-2">Instagram: @akirasushi</p>
+                </div>
+                <div class="premium-card rounded-lg p-6">
+                    <h3 class="text-sm font-black tracking-[0.28em] mb-4 uppercase text-red-200">Onde estamos</h3>
+                    <p class="text-stone-300">Rua Principal, 123 - Centro<br>Aberto de <span id="display-hours"></span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="page-menu" class="flex-1 px-5 py-10 max-w-6xl mx-auto w-full hidden fade-in">
+        <div class="grid lg:grid-cols-[1.05fr_.95fr] gap-10 items-center mb-12">
+            <div>
+                <p class="jp-accent text-xs font-bold tracking-[0.35em] uppercase mb-4">Cardápio Akira</p>
+                <h2 class="text-4xl md:text-6xl font-black leading-none uppercase">Tradição, corte e fogo.</h2>
+                <p class="text-stone-400 mt-5 max-w-xl leading-relaxed">Escolha sushis, temakis e combinados preparados para chegar com frescor, contraste e apresentação premium.</p>
+            </div>
+            <div class="relative min-h-64 hidden md:block">
+                <img src="https://images.unsplash.com/photo-1611143669185-af224c5e3252?auto=format&fit=crop&w=760&q=85" alt="Combinado de sushi" class="absolute right-0 top-0 w-72 h-72 lg:w-80 lg:h-80 rounded-full object-cover dish-glow">
+                <div class="absolute right-48 bottom-0 w-36 h-36 rounded-full bg-red-700/20 blur-3xl"></div>
+            </div>
+        </div>
+
+        <div class="premium-card rounded-lg p-4 md:p-5 flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+            <input type="text" id="search-input" placeholder="Buscar no cardápio..." class="premium-input px-5 py-3 w-full md:w-1/2 transition" onkeyup="renderMenu()">
+            <select id="filter-category" class="premium-input px-5 py-3 w-full md:w-64 transition" onchange="renderMenu()">
+                <option value="Todos">Todos</option>
+                <option value="Sushi">Sushi</option>
+                <option value="Temaki">Temaki</option>
+                <option value="Combinados">Combinados</option>
+                <option value="Bebidas">Bebidas</option>
+                <option value="Porções">Porções</option>
+            </select>
+        </div>
+
+        <div id="menu-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <!-- Renderizado via JS -->
+        </div>
+    </section>
+
+    <section id="page-cart" class="flex-1 p-6 max-w-3xl mx-auto w-full hidden fade-in">
+        <h2 class="text-2xl font-bold tracking-widest uppercase border-b border-stone-800 pb-2 mb-6">Meu Pedido</h2>
+        <div id="cart-items" class="space-y-4 mb-8"></div>
+
+        <div class="toro-border pb-6 mb-6">
+            <div class="flex justify-between items-center text-xl font-bold">
+                <span>Total:</span>
+                <span id="cart-total">R$ 0,00</span>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div>
+                <label class="block text-sm text-stone-400 mb-2">Modo de Entrega</label>
+                <select id="delivery-mode" class="bg-[#111] text-white border border-stone-700 p-3 rounded w-full" onchange="toggleAddressField()">
+                    <option value="Entrega">Entrega</option>
+                    <option value="Retirar no local">Retirar no local</option>
+                </select>
+            </div>
+
+            <div id="address-container">
+                <label class="block text-sm text-stone-400 mb-2">Endereço de Entrega</label>
+                <input type="text" id="customer-address" placeholder="Rua, número, bairro, referência" class="bg-[#111] text-white border border-stone-700 p-3 rounded w-full focus:outline-none focus:border-red-300">
+            </div>
+
+            <div>
+                <label class="block text-sm text-stone-400 mb-2">Forma de Pagamento</label>
+                <select id="payment-method" class="bg-[#111] text-white border border-stone-700 p-3 rounded w-full"></select>
+            </div>
+
+            <button id="btn-send-order" onclick="sendOrder()" class="w-full premium-button font-bold py-4 rounded transition uppercase tracking-wider">
+                Enviar Pedido via WhatsApp
+            </button>
+            <p id="closed-warning" class="text-red-400 text-center text-sm hidden">A loja está fechada no momento. Não é possível enviar pedidos.</p>
+        </div>
+    </section>
+
+    <section id="page-admin" class="flex-1 p-6 max-w-5xl mx-auto w-full hidden fade-in">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold uppercase tracking-widest">Painel de Controle</h2>
+            <button onclick="logoutAdmin()" class="text-sm text-red-400 hover:text-red-300">Sair</button>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="premium-card p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-4 border-b border-stone-700 pb-2">Configurações da Loja</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-stone-400">Nome do Restaurante</label>
+                        <input type="text" id="adm-store-name" class="w-full bg-black border border-stone-700 p-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-stone-400">Número do WhatsApp (Ex: 5511999999999)</label>
+                        <input type="text" id="adm-whatsapp" class="w-full bg-black border border-stone-700 p-2 text-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-stone-400">Horário Abertura</label>
+                            <input type="time" id="adm-time-open" class="w-full bg-black border border-stone-700 p-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-stone-400">Horário Fechamento</label>
+                            <input type="time" id="adm-time-close" class="w-full bg-black border border-stone-700 p-2 text-white">
+                        </div>
+                    </div>
+                    <button onclick="saveSettings()" class="premium-button px-4 py-2 rounded text-sm font-bold w-full">Salvar Configurações</button>
+                </div>
+            </div>
+
+            <div class="premium-card p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-4 border-b border-stone-700 pb-2">Novo Produto</h3>
+                <form id="form-product" onsubmit="saveProduct(event)" class="space-y-4">
+                    <input type="hidden" id="adm-prod-id">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-stone-400">Nome</label>
+                            <input type="text" id="adm-prod-name" required class="w-full bg-black border border-stone-700 p-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-stone-400">Preço (R$)</label>
+                            <input type="number" step="0.01" id="adm-prod-price" required class="w-full bg-black border border-stone-700 p-2 text-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-stone-400">Categoria</label>
+                        <select id="adm-prod-cat" class="w-full bg-black border border-stone-700 p-2 text-white">
+                            <option>Sushi</option><option>Temaki</option><option>Combinados</option><option>Bebidas</option><option>Porções</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-stone-400">URL da Imagem</label>
+                        <input type="url" id="adm-prod-img" required class="w-full bg-black border border-stone-700 p-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-stone-400">Descrição/Ingredientes</label>
+                        <textarea id="adm-prod-desc" class="w-full bg-black border border-stone-700 p-2 text-white text-sm" rows="2"></textarea>
+                    </div>
+                    <button type="submit" class="premium-button px-4 py-2 rounded text-sm font-bold w-full" id="btn-save-prod">Adicionar Produto</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-8 premium-card p-6 rounded-lg">
+            <h3 class="text-lg font-bold mb-4 border-b border-stone-700 pb-2">Produtos Cadastrados</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="text-stone-500 border-b border-stone-800">
+                            <th class="py-2">Img</th>
+                            <th>Nome</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th class="text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-product-list"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <div id="login-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center hidden z-50 p-5">
+        <div class="premium-card p-8 rounded-lg max-w-sm w-full">
+            <h3 class="text-xl font-bold mb-4 uppercase text-center">Acesso Restrito</h3>
+            <input type="text" id="login-user" placeholder="Login" class="w-full bg-black border border-stone-700 p-3 mb-4 text-white">
+            <input type="password" id="login-pass" placeholder="Senha" class="w-full bg-black border border-stone-700 p-3 mb-6 text-white">
+            <div class="flex gap-4">
+                <button onclick="document.getElementById('login-modal').classList.add('hidden')" class="w-1/2 p-3 border border-stone-600 text-stone-400 rounded">Cancelar</button>
+                <button onclick="authenticate()" class="w-1/2 p-3 premium-button font-bold rounded">Entrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaultSettings = {
+            storeName: "AKIRA SUSHI",
+            whatsapp: "5511999999999",
+            openHour: "18:00",
+            closeHour: "23:59",
+            paymentMethods: ["Dinheiro", "Cartão de Crédito", "Cartão de Débito", "Pix"]
+        };
+
+        const defaultProducts = [
+            { id: 1, name: "AKIRA ESPECIAL", price: 42.00, category: "Combinados", img: "https://images.unsplash.com/photo-1611143669185-af224c5e3252?auto=format&fit=crop&w=700&q=85", desc: "Seleção de niguiris, uramakis e sashimis com finalização da casa." },
+            { id: 2, name: "URAMAKI SALMÃO", price: 29.00, category: "Sushi", img: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=700&q=85", desc: "Arroz temperado, salmão fresco, cream cheese e gergelim." },
+            { id: 3, name: "TEMAKI SPICY", price: 32.00, category: "Temaki", img: "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=700&q=85", desc: "Cone crocante com salmão batido, cebolinha e toque picante." },
+            { id: 4, name: "MISSÔ SHIRU", price: 14.00, category: "Porções", img: "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=700&q=85", desc: "Caldo quente de missô com tofu, wakame e cebolinha." },
+            { id: 5, name: "CHÁ GELADO", price: 9.00, category: "Bebidas", img: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=700&q=85", desc: "Chá gelado cítrico para acompanhar peças frescas." }
+        ];
+
+        let settings = JSON.parse(localStorage.getItem("settings")) || defaultSettings;
+        let products = JSON.parse(localStorage.getItem("products")) || defaultProducts;
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        if (products.some(product => ["SMASH BURGER", "DUPLO BACON", "FRITAS RÚSTICAS", "COCA-COLA LATA"].includes(fixEncodingText(product.name)))) {
+            products = defaultProducts;
+            localStorage.setItem("products", JSON.stringify(products));
+        }
+
+        settings = {
+            ...settings,
+            storeName: ["LANCHONETE", "LANCHONETE PREMIUM"].includes(fixEncodingText(settings.storeName).toUpperCase()) ? "AKIRA SUSHI" : fixEncodingText(settings.storeName),
+            paymentMethods: (settings.paymentMethods || defaultSettings.paymentMethods).map(fixEncodingText)
+        };
+
+        products = products.map(product => ({
+            ...product,
+            name: fixEncodingText(product.name),
+            category: normalizeCategory(product.category),
+            desc: fixEncodingText(product.desc)
+        }));
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateAppInfo();
+            checkStoreStatus();
+            renderPaymentMethods();
+            updateCartBadge();
+            setInterval(checkStoreStatus, 60000);
+        });
+
+        function navigate(page) {
+            document.getElementById("page-home").classList.add("hidden");
+            document.getElementById("page-menu").classList.add("hidden");
+            document.getElementById("page-cart").classList.add("hidden");
+            document.getElementById("page-admin").classList.add("hidden");
+            document.getElementById(`page-${page}`).classList.remove("hidden");
+
+            if (page === "menu") renderMenu();
+            if (page === "cart") renderCart();
+            window.scrollTo(0, 0);
+        }
+
+        function isStoreOpen() {
+            const now = new Date();
+            const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+            const [openH, openM] = settings.openHour.split(":").map(Number);
+            const [closeH, closeM] = settings.closeHour.split(":").map(Number);
+            const openTotalMinutes = openH * 60 + openM;
+            const closeTotalMinutes = closeH * 60 + closeM;
+
+            if (closeTotalMinutes < openTotalMinutes) {
+                return currentTotalMinutes >= openTotalMinutes || currentTotalMinutes <= closeTotalMinutes;
+            }
+            return currentTotalMinutes >= openTotalMinutes && currentTotalMinutes <= closeTotalMinutes;
+        }
+
+        function checkStoreStatus() {
+            const isOpen = isStoreOpen();
+            const badge = document.getElementById("store-status-badge");
+            const btnSend = document.getElementById("btn-send-order");
+            const closedWarning = document.getElementById("closed-warning");
+
+            if (isOpen) {
+                badge.textContent = "ABERTO AGORA";
+                badge.className = "inline-block px-4 py-1 rounded-full text-xs font-bold mb-8 bg-green-950/80 text-green-300 border border-green-700 tracking-widest";
+                btnSend.classList.remove("hidden");
+                closedWarning.classList.add("hidden");
+            } else {
+                badge.textContent = "FECHADO";
+                badge.className = "inline-block px-4 py-1 rounded-full text-xs font-bold mb-8 bg-red-950/80 text-red-300 border border-red-700 tracking-widest";
+                btnSend.classList.add("hidden");
+                closedWarning.classList.remove("hidden");
+            }
+            return isOpen;
+        }
+
+        function updateAppInfo() {
+            document.getElementById("nav-logo").textContent = settings.storeName;
+            document.getElementById("display-contact").innerHTML = `WhatsApp: ${settings.whatsapp}`;
+            document.getElementById("display-hours").textContent = `${settings.openHour} às ${settings.closeHour}`;
+        }
+
+        function fixEncodingText(value) {
+            return String(value || "")
+                .replaceAll("Ã¡", "á")
+                .replaceAll("Ã ", "à")
+                .replaceAll("Ã£", "ã")
+                .replaceAll("Ã¢", "â")
+                .replaceAll("Ã©", "é")
+                .replaceAll("Ãª", "ê")
+                .replaceAll("Ã­", "í")
+                .replaceAll("Ã³", "ó")
+                .replaceAll("Ãµ", "õ")
+                .replaceAll("Ãº", "ú")
+                .replaceAll("Ã‡", "Ç")
+                .replaceAll("Ã§", "ç");
+        }
+
+        function normalizeCategory(category) {
+            return fixEncodingText(category)
+                .replace("Combos", "Combinados")
+                .replace("Lanches", "Sushi")
+                .replace("Porções", "Porções");
+        }
+
+        function renderMenu() {
+            const grid = document.getElementById("menu-grid");
+            const search = document.getElementById("search-input").value.toLowerCase();
+            const filter = document.getElementById("filter-category").value;
+            const open = isStoreOpen();
+
+            grid.innerHTML = "";
+
+            const filtered = products.filter(p => {
+                const desc = p.desc || "";
+                const matchSearch = p.name.toLowerCase().includes(search) || desc.toLowerCase().includes(search);
+                const matchFilter = filter === "Todos" || normalizeCategory(p.category) === filter;
+                return matchSearch && matchFilter;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 premium-card rounded-lg p-8 text-center text-stone-400">Nenhum item encontrado.</div>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const card = document.createElement("div");
+                card.className = "menu-card rounded-lg overflow-hidden transition duration-300 flex flex-col";
+                card.innerHTML = `
+                    <div class="relative h-56 overflow-hidden bg-stone-950">
+                        <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover transition duration-500 hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                        <span class="absolute left-4 top-4 rounded-full bg-black/65 border border-white/10 px-3 py-1 text-[10px] font-black tracking-[0.2em] uppercase text-red-200">${normalizeCategory(p.category)}</span>
+                    </div>
+                    <div class="p-5 flex flex-col grow">
+                        <div class="flex items-start justify-between gap-4 mb-3">
+                            <h4 class="text-lg font-black tracking-[0.08em] uppercase leading-tight">${p.name}</h4>
+                            <span class="shrink-0 text-yellow-200 font-black">R$ ${p.price.toFixed(2)}</span>
+                        </div>
+                        <p class="text-sm text-stone-400 leading-relaxed mb-5">${p.desc || ""}</p>
+                        <button onclick="addToCart(${p.id})" class="mt-auto premium-button rounded-full px-4 py-3 text-xs font-black uppercase tracking-[0.18em] transition disabled:opacity-50 disabled:cursor-not-allowed" ${!open ? "disabled" : ""}>
+                            Adicionar
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function addToCart(id) {
+            if (!isStoreOpen()) { alert("A loja está fechada."); return; }
+            const prod = products.find(p => p.id === id);
+            const itemIndex = cart.findIndex(c => c.id === id);
+
+            if (itemIndex > -1) cart[itemIndex].qtd += 1;
+            else cart.push({ ...prod, qtd: 1 });
+
+            saveCart();
+            renderMenu();
+            alert(`${prod.name} adicionado ao carrinho!`);
+        }
+
+        function updateQty(id, delta) {
+            const itemIndex = cart.findIndex(c => c.id === id);
+            if (itemIndex > -1) {
+                cart[itemIndex].qtd += delta;
+                if (cart[itemIndex].qtd <= 0) cart.splice(itemIndex, 1);
+            }
+            saveCart();
+            renderCart();
+        }
+
+        function saveCart() {
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById("cart-badge");
+            const totalItems = cart.reduce((acc, item) => acc + item.qtd, 0);
+            if (totalItems > 0) {
+                badge.textContent = totalItems;
+                badge.classList.remove("hidden");
+            } else {
+                badge.classList.add("hidden");
+            }
+        }
+
+        function renderCart() {
+            const container = document.getElementById("cart-items");
+            const totalEl = document.getElementById("cart-total");
+            container.innerHTML = "";
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-stone-500 italic">Seu carrinho está vazio.</p>';
+                totalEl.textContent = "R$ 0,00";
+                return;
+            }
+
+            let total = 0;
+            cart.forEach(item => {
+                const sub = item.price * item.qtd;
+                total += sub;
+                container.innerHTML += `
+                    <div class="flex justify-between items-center premium-card p-3 rounded-lg">
+                        <div>
+                            <p class="font-bold text-sm tracking-wider uppercase">${item.name}</p>
+                            <p class="text-stone-500 text-xs">R$ ${item.price.toFixed(2)} un.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="updateQty(${item.id}, -1)" class="w-8 h-8 rounded-full bg-stone-800 text-white font-bold flex items-center justify-center hover:bg-stone-700">-</button>
+                            <span class="w-4 text-center font-bold">${item.qtd}</span>
+                            <button onclick="updateQty(${item.id}, 1)" class="w-8 h-8 rounded-full bg-red-700 text-white font-bold flex items-center justify-center hover:bg-red-600">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+            totalEl.textContent = `R$ ${total.toFixed(2)}`;
+        }
+
+        function toggleAddressField() {
+            const mode = document.getElementById("delivery-mode").value;
+            const container = document.getElementById("address-container");
+            container.classList.toggle("hidden", mode === "Retirar no local");
+        }
+
+        function renderPaymentMethods() {
+            const select = document.getElementById("payment-method");
+            select.innerHTML = settings.paymentMethods.map(m => `<option value="${m}">${m}</option>`).join("");
+        }
+
+        function getGreeting() {
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 12) return "Bom dia!";
+            if (hour >= 12 && hour < 18) return "Boa tarde!";
+            return "Boa noite!";
+        }
+
+        function sendOrder() {
+            if (!isStoreOpen()) {
+                alert("A loja está fechada. Não é possível enviar pedido.");
+                return;
+            }
+            if (cart.length === 0) {
+                alert("Seu carrinho está vazio.");
+                return;
+            }
+
+            const mode = document.getElementById("delivery-mode").value;
+            const address = document.getElementById("customer-address").value;
+            const payment = document.getElementById("payment-method").value;
+
+            if (mode === "Entrega" && address.trim() === "") {
+                alert("Por favor, preencha o endereço de entrega.");
+                return;
+            }
+
+            let msg = `${getGreeting()}\n*Novo Pedido*\n\n`;
+            let total = 0;
+
+            cart.forEach(item => {
+                msg += `${item.qtd}x ${item.name}\n`;
+                total += item.price * item.qtd;
+            });
+
+            msg += `\n*Total:* R$ ${total.toFixed(2)}\n`;
+            msg += `*Forma de pagamento:* ${payment}\n`;
+            msg += mode === "Entrega" ? `*Endereço de entrega:* ${address}` : "*Retirada no local*";
+
+            const encodedMsg = encodeURIComponent(msg);
+            const phone = settings.whatsapp.replace(/\D/g, "");
+            window.open(`https://wa.me/${phone}?text=${encodedMsg}`, "_blank");
+
+            cart = [];
+            saveCart();
+            document.getElementById("customer-address").value = "";
+            navigate("home");
+        }
+
+        function showAdminLogin() {
+            document.getElementById("login-modal").classList.remove("hidden");
+        }
+
+        function authenticate() {
+            const u = document.getElementById("login-user").value;
+            const p = document.getElementById("login-pass").value;
+            if (u === "ADM123" && p === "Login@123") {
+                document.getElementById("login-modal").classList.add("hidden");
+                document.getElementById("login-user").value = "";
+                document.getElementById("login-pass").value = "";
+                loadAdminData();
+                navigate("admin");
+            } else {
+                alert("Credenciais incorretas.");
+            }
+        }
+
+        function logoutAdmin() {
+            navigate("home");
+        }
+
+        function loadAdminData() {
+            document.getElementById("adm-store-name").value = settings.storeName;
+            document.getElementById("adm-whatsapp").value = settings.whatsapp;
+            document.getElementById("adm-time-open").value = settings.openHour;
+            document.getElementById("adm-time-close").value = settings.closeHour;
+            renderAdminProducts();
+        }
+
+        function saveSettings() {
+            settings.storeName = document.getElementById("adm-store-name").value;
+            settings.whatsapp = document.getElementById("adm-whatsapp").value;
+            settings.openHour = document.getElementById("adm-time-open").value;
+            settings.closeHour = document.getElementById("adm-time-close").value;
+
+            localStorage.setItem("settings", JSON.stringify(settings));
+            updateAppInfo();
+            checkStoreStatus();
+            alert("Configurações salvas!");
+        }
+
+        function renderAdminProducts() {
+            const tbody = document.getElementById("admin-product-list");
+            tbody.innerHTML = "";
+            products.forEach(p => {
+                tbody.innerHTML += `
+                    <tr class="border-b border-stone-800">
+                        <td class="py-2"><img src="${p.img}" class="w-8 h-8 rounded-full object-cover"></td>
+                        <td class="font-bold text-xs uppercase tracking-wider">${p.name}</td>
+                        <td class="text-stone-400 text-xs">${normalizeCategory(p.category)}</td>
+                        <td class="text-sm">R$ ${p.price.toFixed(2)}</td>
+                        <td class="text-right gap-2">
+                            <button onclick="editProduct(${p.id})" class="text-blue-400 text-xs uppercase tracking-wider mr-2">Editar</button>
+                            <button onclick="deleteProduct(${p.id})" class="text-red-400 text-xs uppercase tracking-wider">Remover</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function saveProduct(e) {
+            e.preventDefault();
+            const idVal = document.getElementById("adm-prod-id").value;
+            const newProd = {
+                id: idVal ? parseInt(idVal) : Date.now(),
+                name: document.getElementById("adm-prod-name").value,
+                price: parseFloat(document.getElementById("adm-prod-price").value),
+                category: document.getElementById("adm-prod-cat").value,
+                img: document.getElementById("adm-prod-img").value,
+                desc: document.getElementById("adm-prod-desc").value
+            };
+
+            if (idVal) {
+                const idx = products.findIndex(p => p.id === parseInt(idVal));
+                products[idx] = newProd;
+                document.getElementById("btn-save-prod").textContent = "Adicionar Produto";
+            } else {
+                products.push(newProd);
+            }
+
+            localStorage.setItem("products", JSON.stringify(products));
+            document.getElementById("form-product").reset();
+            document.getElementById("adm-prod-id").value = "";
+            renderAdminProducts();
+        }
+
+        function editProduct(id) {
+            const p = products.find(prod => prod.id === id);
+            document.getElementById("adm-prod-id").value = p.id;
+            document.getElementById("adm-prod-name").value = p.name;
+            document.getElementById("adm-prod-price").value = p.price;
+            document.getElementById("adm-prod-cat").value = normalizeCategory(p.category);
+            document.getElementById("adm-prod-img").value = p.img;
+            document.getElementById("adm-prod-desc").value = p.desc;
+            document.getElementById("btn-save-prod").textContent = "Salvar Alteração";
+            window.scrollTo(0, 0);
+        }
+
+        function deleteProduct(id) {
+            if (confirm("Tem certeza que deseja remover este produto?")) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem("products", JSON.stringify(products));
+                renderAdminProducts();
+            }
+        }
+    </script>
+</body>
+</html>
