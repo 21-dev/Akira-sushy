@@ -201,13 +201,26 @@
             <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-5 pb-12">
                 <div class="premium-card rounded-lg p-6">
                     <h3 class="text-sm font-black tracking-[0.28em] mb-4 uppercase text-red-200">Contatos</h3>
-                    <p class="text-stone-300" id="display-contact">WhatsApp: Carregando...</p>
-                    <p class="text-stone-400 mt-2">Instagram: @akirasushi</p>
+                    <p id="display-contact" class="hidden"></p>
+                    <div id="display-contacts" class="space-y-2 text-stone-300"></div>
                 </div>
                 <div class="premium-card rounded-lg p-6">
                     <h3 class="text-sm font-black tracking-[0.28em] mb-4 uppercase text-red-200">Onde estamos</h3>
-                    <p class="text-stone-300">Rua Principal, 123 - Centro<br>Aberto de <span id="display-hours"></span></p>
+                    <p class="text-stone-300">Rua Principal, 123 - Centro<br>Aberto <span id="display-days"></span>, <span id="display-hours"></span></p>
                 </div>
+            </div>
+        </div>
+
+        <div class="px-6 pb-14">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex items-end justify-between gap-4 mb-6">
+                    <div>
+                        <p class="jp-accent text-xs font-bold tracking-[0.35em] uppercase mb-3">Selecao especial</p>
+                        <h3 class="text-3xl md:text-4xl font-black uppercase">Destaques da casa</h3>
+                    </div>
+                    <button onclick="navigate('menu')" class="hidden sm:inline-flex premium-button px-5 py-3 rounded-full text-xs font-black tracking-[0.18em] uppercase transition">Cardapio</button>
+                </div>
+                <div id="house-highlights" class="grid md:grid-cols-3 gap-5"></div>
             </div>
         </div>
     </section>
@@ -244,8 +257,14 @@
 
     <section id="page-cart" class="flex-1 p-6 max-w-3xl mx-auto w-full hidden fade-in">
         <h2 class="text-2xl font-bold tracking-widest uppercase border-b border-stone-800 pb-2 mb-6">Meu Pedido</h2>
+        <div id="empty-cart-state" class="premium-card rounded-lg p-8 text-center hidden">
+            <p class="text-xl font-black uppercase tracking-[0.12em] mb-3">Seu carrinho esta vazio</p>
+            <p class="text-stone-400 mb-6">Adicione um item do cardapio para liberar os dados do pedido.</p>
+            <button onclick="navigate('menu')" class="premium-button px-6 py-3 rounded-full text-xs font-black tracking-[0.18em] uppercase transition">Ver cardapio</button>
+        </div>
         <div id="cart-items" class="space-y-4 mb-8"></div>
 
+        <div id="cart-checkout">
         <div class="toro-border pb-6 mb-6">
             <div class="flex justify-between items-center text-xl font-bold">
                 <span>Total:</span>
@@ -272,10 +291,16 @@
                 <select id="payment-method" class="bg-[#111] text-white border border-stone-700 p-3 rounded w-full"></select>
             </div>
 
+            <div>
+                <label class="block text-sm text-stone-400 mb-2">Observacoes do Pedido</label>
+                <textarea id="order-notes" rows="3" placeholder="Ex: sem cebolinha, trocar molho, ponto do prato..." class="bg-[#111] text-white border border-stone-700 p-3 rounded w-full focus:outline-none focus:border-red-300"></textarea>
+            </div>
+
             <button id="btn-send-order" onclick="sendOrder()" class="w-full premium-button font-bold py-4 rounded transition uppercase tracking-wider">
                 Enviar Pedido via WhatsApp
             </button>
             <p id="closed-warning" class="text-red-400 text-center text-sm hidden">A loja está fechada no momento. Não é possível enviar pedidos.</p>
+        </div>
         </div>
     </section>
 
@@ -305,6 +330,10 @@
                         <div>
                             <label class="block text-sm text-stone-400">Horário Fechamento</label>
                             <input type="time" id="adm-time-close" class="w-full bg-black border border-stone-700 p-2 text-white">
+                            <div class="mt-4">
+                                <label class="block text-sm text-stone-400 mb-2">Dias de Funcionamento</label>
+                                <div id="adm-operating-days" class="grid grid-cols-2 gap-2 text-sm text-stone-300"></div>
+                            </div>
                         </div>
                     </div>
                     <button onclick="saveSettings()" class="premium-button px-4 py-2 rounded text-sm font-bold w-full">Salvar Configurações</button>
@@ -332,8 +361,13 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm text-stone-400">URL da Imagem</label>
-                        <input type="url" id="adm-prod-img" required class="w-full bg-black border border-stone-700 p-2 text-white">
+                        <label class="block text-sm text-stone-400">Imagem do Produto</label>
+                        <input type="file" id="adm-prod-img" accept="image/*" class="w-full bg-black border border-stone-700 p-2 text-white file:mr-4 file:border-0 file:bg-red-800 file:px-3 file:py-2 file:text-sm file:font-bold file:text-white hover:file:bg-red-700">
+                        <input type="hidden" id="adm-prod-current-img">
+                        <div id="adm-prod-img-preview" class="mt-3 hidden items-center gap-3 rounded border border-stone-800 bg-black/35 p-3">
+                            <img id="adm-prod-img-preview-photo" src="" alt="Prévia da imagem" class="h-16 w-16 rounded object-cover">
+                            <p id="adm-prod-img-preview-text" class="text-xs text-stone-400">Imagem selecionada</p>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-sm text-stone-400">Descrição/Ingredientes</label>
@@ -341,6 +375,31 @@
                     </div>
                     <button type="submit" class="premium-button px-4 py-2 rounded text-sm font-bold w-full" id="btn-save-prod">Adicionar Produto</button>
                 </form>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mt-8">
+            <div class="premium-card p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-4 border-b border-stone-700 pb-2">Contatos do Site</h3>
+                <form id="form-contact" onsubmit="saveContact(event)" class="space-y-3 mb-5">
+                    <input type="hidden" id="adm-contact-id">
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" id="adm-contact-label" placeholder="Nome" required class="w-full bg-black border border-stone-700 p-2 text-white">
+                        <input type="text" id="adm-contact-value" placeholder="Contato" required class="w-full bg-black border border-stone-700 p-2 text-white">
+                    </div>
+                    <button type="submit" id="btn-save-contact" class="premium-button px-4 py-2 rounded text-sm font-bold w-full">Adicionar Contato</button>
+                </form>
+                <div id="admin-contact-list" class="space-y-2"></div>
+            </div>
+
+            <div class="premium-card p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-4 border-b border-stone-700 pb-2">Formas de Pagamento</h3>
+                <form id="form-payment" onsubmit="savePaymentMethod(event)" class="space-y-3 mb-5">
+                    <input type="hidden" id="adm-payment-index">
+                    <input type="text" id="adm-payment-name" placeholder="Ex: Pix, Dinheiro, Cartao" required class="w-full bg-black border border-stone-700 p-2 text-white">
+                    <button type="submit" id="btn-save-payment" class="premium-button px-4 py-2 rounded text-sm font-bold w-full">Adicionar Pagamento</button>
+                </form>
+                <div id="admin-payment-list" class="space-y-2"></div>
             </div>
         </div>
 
@@ -381,8 +440,23 @@
             whatsapp: "5511999999999",
             openHour: "18:00",
             closeHour: "23:59",
+            operatingDays: [0, 1, 2, 3, 4, 5, 6],
+            contacts: [
+                { id: 1, label: "WhatsApp", value: "5511999999999" },
+                { id: 2, label: "Instagram", value: "@akirasushi" }
+            ],
             paymentMethods: ["Dinheiro", "Cartão de Crédito", "Cartão de Débito", "Pix"]
         };
+
+        const weekDays = [
+            { value: 0, label: "Domingo", short: "Dom" },
+            { value: 1, label: "Segunda", short: "Seg" },
+            { value: 2, label: "Terca", short: "Ter" },
+            { value: 3, label: "Quarta", short: "Qua" },
+            { value: 4, label: "Quinta", short: "Qui" },
+            { value: 5, label: "Sexta", short: "Sex" },
+            { value: 6, label: "Sabado", short: "Sab" }
+        ];
 
         const defaultProducts = [
             { id: 1, name: "AKIRA ESPECIAL", price: 42.00, category: "Combinados", img: "https://images.unsplash.com/photo-1611143669185-af224c5e3252?auto=format&fit=crop&w=700&q=85", desc: "Seleção de niguiris, uramakis e sashimis com finalização da casa." },
@@ -404,6 +478,12 @@
         settings = {
             ...settings,
             storeName: ["LANCHONETE", "LANCHONETE PREMIUM"].includes(fixEncodingText(settings.storeName).toUpperCase()) ? "AKIRA SUSHI" : fixEncodingText(settings.storeName),
+            operatingDays: Array.isArray(settings.operatingDays) ? settings.operatingDays.map(Number) : defaultSettings.operatingDays,
+            contacts: (settings.contacts || defaultSettings.contacts).map(contact => ({
+                id: contact.id || Date.now() + Math.random(),
+                label: fixEncodingText(contact.label),
+                value: fixEncodingText(contact.value)
+            })),
             paymentMethods: (settings.paymentMethods || defaultSettings.paymentMethods).map(fixEncodingText)
         };
 
@@ -416,9 +496,11 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             updateAppInfo();
+            renderSiteExtras();
             checkStoreStatus();
             renderPaymentMethods();
             updateCartBadge();
+            setupImageUploadPreview();
             setInterval(checkStoreStatus, 60000);
         });
 
@@ -436,6 +518,7 @@
 
         function isStoreOpen() {
             const now = new Date();
+            if (!settings.operatingDays.includes(now.getDay())) return false;
             const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
             const [openH, openM] = settings.openHour.split(":").map(Number);
             const [closeH, closeM] = settings.closeHour.split(":").map(Number);
@@ -472,6 +555,43 @@
             document.getElementById("nav-logo").textContent = settings.storeName;
             document.getElementById("display-contact").innerHTML = `WhatsApp: ${settings.whatsapp}`;
             document.getElementById("display-hours").textContent = `${settings.openHour} às ${settings.closeHour}`;
+        }
+
+        function renderSiteExtras() {
+            const contactsEl = document.getElementById("display-contacts");
+            contactsEl.innerHTML = settings.contacts.map(contact => `
+                <p><span class="text-red-200 font-bold">${contact.label}:</span> ${contact.value}</p>
+            `).join("");
+            document.getElementById("display-days").textContent = formatOperatingDays();
+            document.getElementById("display-hours").textContent = `${settings.openHour} as ${settings.closeHour}`;
+            renderHouseHighlights();
+        }
+
+        function formatOperatingDays() {
+            const selected = weekDays.filter(day => settings.operatingDays.includes(day.value));
+            if (selected.length === 7) return "todos os dias";
+            if (selected.length === 0) return "sem dias ativos";
+            return selected.map(day => day.short).join(", ");
+        }
+
+        function renderHouseHighlights() {
+            const container = document.getElementById("house-highlights");
+            if (!container) return;
+            const highlights = products.slice(0, 3);
+            container.innerHTML = highlights.map(item => `
+                <div class="menu-card rounded-lg overflow-hidden transition duration-300">
+                    <img src="${item.img}" alt="${item.name}" class="w-full h-44 object-cover">
+                    <div class="p-5">
+                        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-red-200 mb-2">${normalizeCategory(item.category)}</p>
+                        <h4 class="font-black uppercase tracking-[0.08em]">${item.name}</h4>
+                        <p class="text-sm text-stone-400 mt-2">${item.desc || ""}</p>
+                        <div class="mt-4 flex items-center justify-between gap-3">
+                            <span class="text-yellow-200 font-black">R$ ${item.price.toFixed(2)}</span>
+                            <button onclick="addToCart(${item.id})" class="premium-button rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] transition">Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
         }
 
         function fixEncodingText(value) {
@@ -583,14 +703,22 @@
         function renderCart() {
             const container = document.getElementById("cart-items");
             const totalEl = document.getElementById("cart-total");
+            const emptyState = document.getElementById("empty-cart-state");
+            const checkout = document.getElementById("cart-checkout");
             container.innerHTML = "";
 
             if (cart.length === 0) {
+                emptyState.classList.remove("hidden");
+                checkout.classList.add("hidden");
+                container.classList.add("hidden");
                 container.innerHTML = '<p class="text-stone-500 italic">Seu carrinho está vazio.</p>';
                 totalEl.textContent = "R$ 0,00";
                 return;
             }
 
+            emptyState.classList.add("hidden");
+            checkout.classList.remove("hidden");
+            container.classList.remove("hidden");
             let total = 0;
             cart.forEach(item => {
                 const sub = item.price * item.qtd;
@@ -643,6 +771,7 @@
             const mode = document.getElementById("delivery-mode").value;
             const address = document.getElementById("customer-address").value;
             const payment = document.getElementById("payment-method").value;
+            const notes = document.getElementById("order-notes").value.trim();
 
             if (mode === "Entrega" && address.trim() === "") {
                 alert("Por favor, preencha o endereço de entrega.");
@@ -659,6 +788,7 @@
 
             msg += `\n*Total:* R$ ${total.toFixed(2)}\n`;
             msg += `*Forma de pagamento:* ${payment}\n`;
+            if (notes) msg += `*Observacoes:* ${notes}\n`;
             msg += mode === "Entrega" ? `*Endereço de entrega:* ${address}` : "*Retirada no local*";
 
             const encodedMsg = encodeURIComponent(msg);
@@ -668,6 +798,7 @@
             cart = [];
             saveCart();
             document.getElementById("customer-address").value = "";
+            document.getElementById("order-notes").value = "";
             navigate("home");
         }
 
@@ -698,6 +829,9 @@
             document.getElementById("adm-whatsapp").value = settings.whatsapp;
             document.getElementById("adm-time-open").value = settings.openHour;
             document.getElementById("adm-time-close").value = settings.closeHour;
+            renderOperatingDaysAdmin();
+            renderAdminContacts();
+            renderAdminPayments();
             renderAdminProducts();
         }
 
@@ -706,11 +840,133 @@
             settings.whatsapp = document.getElementById("adm-whatsapp").value;
             settings.openHour = document.getElementById("adm-time-open").value;
             settings.closeHour = document.getElementById("adm-time-close").value;
+            settings.operatingDays = Array.from(document.querySelectorAll(".adm-day-checkbox:checked")).map(input => Number(input.value));
 
             localStorage.setItem("settings", JSON.stringify(settings));
             updateAppInfo();
+            renderSiteExtras();
             checkStoreStatus();
             alert("Configurações salvas!");
+        }
+
+        function saveSettingsToStorage() {
+            localStorage.setItem("settings", JSON.stringify(settings));
+            updateAppInfo();
+            renderSiteExtras();
+            renderPaymentMethods();
+            checkStoreStatus();
+        }
+
+        function renderOperatingDaysAdmin() {
+            const container = document.getElementById("adm-operating-days");
+            if (!container) return;
+            container.innerHTML = weekDays.map(day => `
+                <label class="flex items-center gap-2 rounded border border-stone-800 bg-black/35 px-3 py-2">
+                    <input type="checkbox" class="adm-day-checkbox accent-red-700" value="${day.value}" ${settings.operatingDays.includes(day.value) ? "checked" : ""}>
+                    <span>${day.label}</span>
+                </label>
+            `).join("");
+        }
+
+        function renderAdminContacts() {
+            const list = document.getElementById("admin-contact-list");
+            if (!list) return;
+            list.innerHTML = settings.contacts.map(contact => `
+                <div class="flex items-center justify-between gap-3 rounded border border-stone-800 bg-black/35 p-3">
+                    <div>
+                        <p class="text-sm font-bold">${contact.label}</p>
+                        <p class="text-xs text-stone-400">${contact.value}</p>
+                    </div>
+                    <div class="shrink-0">
+                        <button onclick="editContact(${contact.id})" class="text-blue-400 text-xs uppercase tracking-wider mr-2">Editar</button>
+                        <button onclick="deleteContact(${contact.id})" class="text-red-400 text-xs uppercase tracking-wider">Remover</button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function saveContact(event) {
+            event.preventDefault();
+            const id = document.getElementById("adm-contact-id").value;
+            const contact = {
+                id: id ? Number(id) : Date.now(),
+                label: document.getElementById("adm-contact-label").value.trim(),
+                value: document.getElementById("adm-contact-value").value.trim()
+            };
+
+            if (id) {
+                settings.contacts = settings.contacts.map(item => item.id === Number(id) ? contact : item);
+                document.getElementById("btn-save-contact").textContent = "Adicionar Contato";
+            } else {
+                settings.contacts.push(contact);
+            }
+
+            document.getElementById("form-contact").reset();
+            document.getElementById("adm-contact-id").value = "";
+            saveSettingsToStorage();
+            renderAdminContacts();
+        }
+
+        function editContact(id) {
+            const contact = settings.contacts.find(item => item.id === id);
+            if (!contact) return;
+            document.getElementById("adm-contact-id").value = contact.id;
+            document.getElementById("adm-contact-label").value = contact.label;
+            document.getElementById("adm-contact-value").value = contact.value;
+            document.getElementById("btn-save-contact").textContent = "Salvar Contato";
+        }
+
+        function deleteContact(id) {
+            if (!confirm("Remover este contato?")) return;
+            settings.contacts = settings.contacts.filter(item => item.id !== id);
+            saveSettingsToStorage();
+            renderAdminContacts();
+        }
+
+        function renderAdminPayments() {
+            const list = document.getElementById("admin-payment-list");
+            if (!list) return;
+            list.innerHTML = settings.paymentMethods.map((method, index) => `
+                <div class="flex items-center justify-between gap-3 rounded border border-stone-800 bg-black/35 p-3">
+                    <p class="text-sm font-bold">${method}</p>
+                    <div class="shrink-0">
+                        <button onclick="editPaymentMethod(${index})" class="text-blue-400 text-xs uppercase tracking-wider mr-2">Editar</button>
+                        <button onclick="deletePaymentMethod(${index})" class="text-red-400 text-xs uppercase tracking-wider">Remover</button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function savePaymentMethod(event) {
+            event.preventDefault();
+            const index = document.getElementById("adm-payment-index").value;
+            const method = document.getElementById("adm-payment-name").value.trim();
+            if (!method) return;
+
+            if (index !== "") {
+                settings.paymentMethods[Number(index)] = method;
+                document.getElementById("btn-save-payment").textContent = "Adicionar Pagamento";
+            } else {
+                settings.paymentMethods.push(method);
+            }
+
+            document.getElementById("form-payment").reset();
+            document.getElementById("adm-payment-index").value = "";
+            saveSettingsToStorage();
+            renderAdminPayments();
+        }
+
+        function editPaymentMethod(index) {
+            document.getElementById("adm-payment-index").value = index;
+            document.getElementById("adm-payment-name").value = settings.paymentMethods[index];
+            document.getElementById("btn-save-payment").textContent = "Salvar Pagamento";
+        }
+
+        function deletePaymentMethod(index) {
+            if (!confirm("Remover esta forma de pagamento?")) return;
+            settings.paymentMethods.splice(index, 1);
+            saveSettingsToStorage();
+            renderAdminPayments();
         }
 
         function renderAdminProducts() {
@@ -732,15 +988,69 @@
             });
         }
 
-        function saveProduct(e) {
+        function setupImageUploadPreview() {
+            const input = document.getElementById("adm-prod-img");
+            if (!input) return;
+
+            input.addEventListener("change", () => {
+                const file = input.files && input.files[0];
+                if (!file) {
+                    updateImagePreview(document.getElementById("adm-prod-current-img").value, "Imagem atual mantida");
+                    return;
+                }
+
+                const previewUrl = URL.createObjectURL(file);
+                updateImagePreview(previewUrl, file.name);
+            });
+        }
+
+        function updateImagePreview(src, text = "Imagem selecionada") {
+            const preview = document.getElementById("adm-prod-img-preview");
+            const photo = document.getElementById("adm-prod-img-preview-photo");
+            const label = document.getElementById("adm-prod-img-preview-text");
+
+            if (!src) {
+                preview.classList.add("hidden");
+                preview.classList.remove("flex");
+                photo.src = "";
+                label.textContent = "";
+                return;
+            }
+
+            photo.src = src;
+            label.textContent = text;
+            preview.classList.remove("hidden");
+            preview.classList.add("flex");
+        }
+
+        function readImageFileAsDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error("Não foi possível carregar a imagem."));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function saveProduct(e) {
             e.preventDefault();
             const idVal = document.getElementById("adm-prod-id").value;
+            const imageInput = document.getElementById("adm-prod-img");
+            const currentImage = document.getElementById("adm-prod-current-img").value;
+            const selectedImage = imageInput.files && imageInput.files[0];
+
+            if (!idVal && !selectedImage) {
+                alert("Por favor, selecione uma imagem do produto.");
+                return;
+            }
+
+            const imageSrc = selectedImage ? await readImageFileAsDataUrl(selectedImage) : currentImage;
             const newProd = {
                 id: idVal ? parseInt(idVal) : Date.now(),
                 name: document.getElementById("adm-prod-name").value,
                 price: parseFloat(document.getElementById("adm-prod-price").value),
                 category: document.getElementById("adm-prod-cat").value,
-                img: document.getElementById("adm-prod-img").value,
+                img: imageSrc,
                 desc: document.getElementById("adm-prod-desc").value
             };
 
@@ -755,7 +1065,10 @@
             localStorage.setItem("products", JSON.stringify(products));
             document.getElementById("form-product").reset();
             document.getElementById("adm-prod-id").value = "";
+            document.getElementById("adm-prod-current-img").value = "";
+            updateImagePreview("");
             renderAdminProducts();
+            renderHouseHighlights();
         }
 
         function editProduct(id) {
@@ -764,7 +1077,9 @@
             document.getElementById("adm-prod-name").value = p.name;
             document.getElementById("adm-prod-price").value = p.price;
             document.getElementById("adm-prod-cat").value = normalizeCategory(p.category);
-            document.getElementById("adm-prod-img").value = p.img;
+            document.getElementById("adm-prod-img").value = "";
+            document.getElementById("adm-prod-current-img").value = p.img;
+            updateImagePreview(p.img, "Imagem atual. Selecione outra para trocar.");
             document.getElementById("adm-prod-desc").value = p.desc;
             document.getElementById("btn-save-prod").textContent = "Salvar Alteração";
             window.scrollTo(0, 0);
@@ -775,6 +1090,7 @@
                 products = products.filter(p => p.id !== id);
                 localStorage.setItem("products", JSON.stringify(products));
                 renderAdminProducts();
+                renderHouseHighlights();
             }
         }
     </script>
