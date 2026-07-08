@@ -3,736 +3,618 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akira Sushi</title>
+    <title>Akira Sushi - Delivery</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        akira: {
+                            bg: '#0a0a0a',     /* Fundo principal escuro */
+                            panel: '#121212',  /* Fundo de painéis/cards */
+                            gold: '#d4af37',   /* Dourado dos textos/preços */
+                            goldDim: '#9e8125',
+                            red: '#cc0000',    /* Vermelho da logo/destaques */
+                            text: '#a0a0a0'    /* Texto secundário */
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Cinzel', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --bg: #080504;
-            --ink: #130b09;
-            --line: rgba(255,255,255,.1);
-            --gold: #f2cf74;
-            --red: #d81e1f;
-            --red-dark: #821112;
+        body { 
+            background-color: #0a0a0a; 
+            color: #fff; 
+            /* Textura sutil de fundo escuro tipo pedra/ardósia */
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
+            background-attachment: fixed;
         }
-
-        * { scrollbar-width: thin; scrollbar-color: #3a332b #080807; }
-
-        body {
-            background:
-                radial-gradient(circle at 82% 12%, rgba(216,30,31,.18), transparent 23rem),
-                radial-gradient(circle at 12% 24%, rgba(242,207,116,.1), transparent 20rem),
-                radial-gradient(circle at 72% 86%, rgba(216,30,31,.08), transparent 26rem),
-                linear-gradient(180deg, #170d0b 0%, var(--bg) 48%, #030202 100%);
-            color: #fff7e3;
-            font-family: "Helvetica Neue", Arial, sans-serif;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            opacity: .28;
-            background-image:
-                radial-gradient(circle at 12px 12px, rgba(216,30,31,.2) 0 2px, transparent 3px),
-                linear-gradient(rgba(255,255,255,.024) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,.016) 1px, transparent 1px);
-            background-size: 180px 160px, 52px 52px, 52px 52px;
-            mask-image: linear-gradient(to bottom, black, transparent 88%);
-        }
-
-        .toro-border { border-bottom: 1px solid var(--line); }
         .hidden { display: none !important; }
-        .fade-in { animation: fadeIn .35s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-        .glass-nav {
-            background: rgba(5,5,5,.82);
-            border-bottom: 1px solid var(--line);
-            backdrop-filter: blur(18px);
-        }
-
-        .akira-logo {
-            color: var(--gold);
-            font-family: Georgia, "Times New Roman", serif;
-            letter-spacing: .16em;
-            text-shadow: 0 0 24px rgba(242,207,116,.18);
-        }
-
-        .akira-logo::before {
-            content: "";
-            display: inline-block;
-            width: 1.65rem;
-            height: 1.65rem;
-            margin-right: .55rem;
-            border: 5px solid var(--red);
-            border-right-color: transparent;
-            border-radius: 999px;
-            transform: rotate(-24deg) translateY(.25rem);
-            box-shadow: 0 0 22px rgba(216,30,31,.32);
-        }
-
-        .jp-accent {
-            color: var(--gold);
-            text-shadow: 0 0 18px rgba(242,207,116,.14);
-        }
-
-        .premium-hero {
-            position: relative;
-            overflow: hidden;
-            min-height: 520px;
-            border-bottom: 1px solid var(--line);
-        }
-
-        .premium-hero::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(90deg, rgba(5,5,5,.94) 0%, rgba(5,5,5,.72) 35%, rgba(5,5,5,.12) 78%),
-                url("https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1600&q=85") center/cover;
-            transform: scale(1.02);
-        }
-
-        .premium-hero::after {
-            content: "";
-            position: absolute;
-            inset: auto 0 0;
-            height: 42%;
-            background:
-                radial-gradient(circle at 88% 20%, rgba(216,30,31,.28) 0 1.5px, transparent 2.5px),
-                linear-gradient(to bottom, transparent, var(--bg));
-            background-size: 110px 90px, auto;
-        }
-
-        .premium-card {
-            background: linear-gradient(145deg, rgba(28,18,15,.93), rgba(8,6,5,.97));
-            border: 1px solid var(--line);
-            box-shadow: 0 24px 70px rgba(0,0,0,.4), inset 0 1px 0 rgba(242,207,116,.08);
-        }
-
-        .premium-input {
-            background: rgba(18,10,9,.9);
-            border: 1px solid rgba(255,255,255,.11);
-            color: #fff7eb;
-            border-radius: 999px;
-            outline: none;
-        }
-
-        .premium-input:focus {
-            border-color: rgba(242,207,116,.72);
-            box-shadow: 0 0 0 4px rgba(216,30,31,.1);
-        }
-
-        .premium-button {
-            background: linear-gradient(135deg, var(--red), var(--red-dark));
-            color: white;
-            box-shadow: 0 14px 34px rgba(216,30,31,.28);
-        }
-
-        .premium-button:hover {
-            filter: brightness(1.08);
-            transform: translateY(-1px);
-        }
-
-        .menu-card {
-            background: linear-gradient(180deg, rgba(25,15,13,.92), rgba(8,6,5,.98));
-            border: 1px solid rgba(255,255,255,.08);
-            box-shadow: 0 22px 60px rgba(0,0,0,.28);
-        }
-
-        .menu-card:hover {
-            border-color: rgba(242,207,116,.48);
-            transform: translateY(-4px);
-            box-shadow: 0 26px 80px rgba(0,0,0,.46), 0 0 40px rgba(216,30,31,.09);
-        }
-
-        .dish-glow {
-            box-shadow: 0 0 0 1px rgba(242,207,116,.18), 0 18px 50px rgba(216,30,31,.2);
-        }
-
-        .brush-panel {
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Custom scrollbar elegante */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+        
+        /* Efeito visual da logo circular vermelha (enso) */
+        .enso-bg {
             position: relative;
         }
-
-        .brush-panel::before {
-            content: "";
+        .enso-bg::before {
+            content: '';
             position: absolute;
-            inset: -12% auto auto -8%;
-            width: 18rem;
-            height: 18rem;
-            border: 24px solid rgba(216,30,31,.7);
-            border-right-color: transparent;
-            border-bottom-color: rgba(216,30,31,.18);
-            border-radius: 999px;
-            transform: rotate(-22deg);
-            filter: blur(.2px);
-            opacity: .55;
-            pointer-events: none;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%; height: 120%;
+            background-image: radial-gradient(circle, rgba(204,0,0,0.15) 0%, transparent 60%);
+            z-index: -1;
+            border-radius: 50%;
         }
+
+        /* Divisórias elegantes do cardápio */
+        .menu-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.2em;
+            margin: 3rem 0 2rem 0;
+        }
+        .menu-divider::before, .menu-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #333;
+        }
+        .menu-divider::before { margin-right: 1em; }
+        .menu-divider::after { margin-left: 1em; }
     </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col selection:bg-red-700/40">
+<body class="antialiased min-h-screen flex flex-col relative font-sans">
 
-    <nav class="px-5 py-4 glass-nav flex justify-between items-center sticky top-0 z-50">
-        <h1 class="akira-logo text-lg sm:text-xl font-black uppercase cursor-pointer" onclick="navigate('home')" id="nav-logo">AKIRA SUSHI</h1>
-        <div class="flex gap-3 sm:gap-6 text-[11px] sm:text-xs font-bold tracking-[0.14em] sm:tracking-[0.18em] uppercase">
-            <button onclick="navigate('home')" class="hover:text-red-300 transition">Home</button>
-            <button onclick="navigate('menu')" class="hover:text-red-300 transition">Cardápio</button>
-            <button onclick="navigate('cart')" class="hover:text-red-300 transition flex items-center gap-1">
-                Pedido <span id="cart-badge" class="bg-red-700 text-white rounded-full px-2 py-0.5 text-xs hidden">0</span>
+    <nav class="px-6 py-4 flex justify-between items-center sticky top-0 bg-akira-bg/90 backdrop-blur-md z-40 border-b border-gray-900/50">
+        <!-- Logo -->
+        <div class="flex items-center gap-2 cursor-pointer enso-bg" onclick="navigate('home')">
+            <div class="text-akira-red font-serif text-3xl font-bold leading-none select-none">C</div>
+            <div class="flex flex-col">
+                <h1 class="text-xl md:text-2xl font-serif font-bold tracking-widest text-akira-gold leading-none" id="nav-logo">AKIRA</h1>
+                <span class="text-[10px] tracking-[0.3em] text-gray-400 uppercase leading-none mt-1">Sushi</span>
+            </div>
+        </div>
+        
+        <!-- Center Nav -->
+        <div class="hidden md:flex gap-10 text-xs font-semibold tracking-[0.2em] uppercase text-gray-400">
+            <button onclick="navigate('home')" class="hover:text-akira-gold transition">Início</button>
+            <button onclick="navigate('menu')" class="hover:text-akira-gold transition text-white">Menu</button>
+            <button onclick="navigate('cart')" class="hover:text-akira-gold transition">Pedido</button>
+        </div>
+
+        <!-- Right Nav -->
+        <div class="flex items-center gap-6">
+            <button onclick="showAdminLogin()" class="text-gray-600 hover:text-akira-gold transition text-xs tracking-widest uppercase hidden sm:block">Adm</button>
+            <button onclick="navigate('cart')" class="hover:text-akira-gold transition relative flex items-center justify-center group">
+                <span class="text-xs tracking-widest uppercase mr-2 hidden md:block group-hover:text-akira-gold text-gray-400">Carrinho</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 group-hover:text-akira-gold transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                <span id="cart-badge" class="absolute -top-2 -right-2 bg-akira-red text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full hidden">0</span>
             </button>
-            <button onclick="showAdminLogin()" class="hover:text-red-300 transition text-stone-500">ADM</button>
         </div>
     </nav>
 
-    <section id="page-home" class="flex-1 w-full fade-in">
-        <div class="premium-hero px-6">
-            <div class="brush-panel relative z-10 max-w-6xl mx-auto pt-20 md:pt-28 pb-24">
-                <div id="store-status-badge" class="inline-block px-4 py-1 rounded-full text-sm font-bold mb-8"></div>
-                <p class="jp-accent text-xs font-bold tracking-[0.35em] uppercase mb-4">明楽 Sushi House</p>
-                <h2 class="text-5xl md:text-7xl font-black leading-[0.95] max-w-2xl tracking-tight uppercase">AKIRA SUSHI</h2>
-                <p class="text-stone-300 max-w-xl mt-6 leading-relaxed">Sushi autoral, combinados frescos e uma experiência inspirada na força do sumi-e japonês.</p>
-                <button onclick="navigate('menu')" class="premium-button mt-8 px-7 py-3 rounded-full text-xs font-black tracking-[0.2em] uppercase transition">Ver cardápio</button>
-            </div>
-        </div>
-
-        <div class="px-6 -mt-16 relative z-20">
-            <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-5 pb-12">
-                <div class="premium-card rounded-lg p-6">
-                    <h3 class="text-sm font-black tracking-[0.28em] mb-4 uppercase text-red-200">Contatos</h3>
-                    <p id="display-contact" class="hidden"></p>
-                    <div id="display-contacts" class="space-y-2 text-stone-300"></div>
-                </div>
-                <div class="premium-card rounded-lg p-6">
-                    <h3 class="text-sm font-black tracking-[0.28em] mb-4 uppercase text-red-200">Onde estamos</h3>
-                    <p class="text-stone-300">Rua Principal, 123 - Centro<br>Aberto <span id="display-days"></span>, <span id="display-hours"></span></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="px-6 pb-14">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex items-end justify-between gap-4 mb-6">
-                    <div>
-                        <p class="jp-accent text-xs font-bold tracking-[0.35em] uppercase mb-3">Selecao especial</p>
-                        <h3 class="text-3xl md:text-4xl font-black uppercase">Destaques da casa</h3>
+    <section id="page-home" class="flex-1 w-full fade-in flex flex-col">
+        <!-- Hero Split Section -->
+        <div class="flex flex-col md:flex-row min-h-[70vh]">
+            <!-- Text Content -->
+            <div class="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-20 py-16 z-10 relative">
+                <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-akira-bg via-akira-bg/90 to-transparent z-0 hidden md:block"></div>
+                <div class="z-10">
+                    <h4 class="text-akira-red font-serif tracking-[0.3em] text-sm mb-4 uppercase">Tradição Japonesa</h4>
+                    <h2 class="text-5xl md:text-7xl font-serif text-white leading-tight mb-6">
+                        Sabor Que <br><span class="text-akira-gold">Marca.</span>
+                    </h2>
+                    <p class="text-akira-text text-sm md:text-base max-w-md leading-relaxed mb-8">
+                        Ingredientes frescos e selecionados, preparados na hora com carinho. 
+                        Experimente o melhor da culinária oriental com nosso delivery rápido e confiável.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <button onclick="navigate('menu')" class="bg-transparent border border-akira-gold text-akira-gold px-8 py-3 text-xs tracking-[0.2em] uppercase hover:bg-akira-gold hover:text-black transition duration-300">
+                            Ver Menu
+                        </button>
+                        <div id="store-status-badge" class="px-4 py-2 text-[10px] tracking-widest uppercase border"></div>
                     </div>
-                    <button onclick="navigate('menu')" class="hidden sm:inline-flex premium-button px-5 py-3 rounded-full text-xs font-black tracking-[0.18em] uppercase transition">Cardapio</button>
                 </div>
-                <div id="house-highlights" class="grid md:grid-cols-3 gap-5"></div>
+            </div>
+            <!-- Image Content -->
+            <div class="w-full md:w-1/2 relative h-64 md:h-auto">
+                <img src="https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=1000&auto=format&fit=crop" alt="Sushi Bowl" class="absolute inset-0 w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-akira-bg via-transparent to-transparent md:bg-gradient-to-l"></div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto w-full px-8 py-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center border-t border-gray-900 mt-auto">
+            <div>
+                <h4 class="text-akira-gold font-serif mb-2 text-lg">Localização</h4>
+                <p class="text-gray-500 text-xs tracking-wide">Rua Principal, 123<br>Centro</p>
+            </div>
+            <div>
+                <h4 class="text-akira-gold font-serif mb-2 text-lg">Horário</h4>
+                <p class="text-gray-500 text-xs tracking-wide"><span id="display-hours"></span></p>
+            </div>
+            <div>
+                <h4 class="text-akira-gold font-serif mb-2 text-lg">Contato</h4>
+                <p class="text-gray-500 text-xs tracking-wide" id="display-contact">Carregando...</p>
+            </div>
+            <div>
+                <h4 class="text-akira-gold font-serif mb-2 text-lg">Redes</h4>
+                <p class="text-gray-500 text-xs tracking-wide">@akirasushi.delivery</p>
             </div>
         </div>
     </section>
 
-    <section id="page-menu" class="flex-1 px-5 py-10 max-w-6xl mx-auto w-full hidden fade-in">
-        <div class="grid lg:grid-cols-[1.05fr_.95fr] gap-10 items-center mb-12">
-            <div>
-                <p class="jp-accent text-xs font-bold tracking-[0.35em] uppercase mb-4">Cardápio Akira</p>
-                <h2 class="text-4xl md:text-6xl font-black leading-none uppercase">Tradição, corte e fogo.</h2>
-                <p class="text-stone-400 mt-5 max-w-xl leading-relaxed">Escolha sushis, temakis e combinados preparados para chegar com frescor, contraste e apresentação premium.</p>
-            </div>
-            <div class="relative min-h-64 hidden md:block">
-                <img src="https://images.unsplash.com/photo-1611143669185-af224c5e3252?auto=format&fit=crop&w=760&q=85" alt="Combinado de sushi" class="absolute right-0 top-0 w-72 h-72 lg:w-80 lg:h-80 rounded-full object-cover dish-glow">
-                <div class="absolute right-48 bottom-0 w-36 h-36 rounded-full bg-red-700/20 blur-3xl"></div>
-            </div>
+    <section id="page-menu" class="flex-1 w-full hidden fade-in py-12 px-6 md:px-12 lg:px-24 max-w-6xl mx-auto">
+        
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-serif text-white tracking-widest uppercase mb-4">Cardápio</h2>
+            <p class="text-akira-text text-sm max-w-xl mx-auto">Nossas especialidades preparadas com excelência.</p>
         </div>
 
-        <div class="premium-card rounded-lg p-4 md:p-5 flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
-            <input type="text" id="search-input" placeholder="Buscar no cardápio..." class="premium-input px-5 py-3 w-full md:w-1/2 transition" onkeyup="renderMenu()">
-            <select id="filter-category" class="premium-input px-5 py-3 w-full md:w-64 transition" onchange="renderMenu()">
-                <option value="Todos">Todos</option>
-                <option value="Sushi">Sushi</option>
-                <option value="Temaki">Temaki</option>
-                <option value="Combinados">Combinados</option>
-                <option value="Bebidas">Bebidas</option>
-                <option value="Porções">Porções</option>
-            </select>
+        <!-- Filtros Elegantes -->
+        <div class="flex flex-wrap justify-center gap-6 md:gap-10 mb-16 border-b border-gray-800/50 pb-6" id="category-filters">
+            <!-- Categorias serão renderizadas aqui -->
         </div>
 
-        <div id="menu-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <!-- Barra de Busca -->
+        <div class="flex justify-center mb-12">
+            <input type="text" id="search-input" placeholder="Pesquisar prato..." class="bg-transparent text-center border-b border-gray-700 text-white pb-2 px-4 w-full max-w-md focus:outline-none focus:border-akira-gold transition text-sm tracking-widest placeholder-gray-600" onkeyup="renderMenu()">
+        </div>
+
+        <!-- Lista Vertical de Produtos -->
+        <div id="menu-list" class="flex flex-col gap-8 max-w-4xl mx-auto">
             <!-- Renderizado via JS -->
         </div>
     </section>
 
-    <section id="page-cart" class="flex-1 p-6 max-w-3xl mx-auto w-full hidden fade-in">
-        <h2 class="text-2xl font-bold tracking-widest uppercase border-b border-stone-800 pb-2 mb-6">Meu Pedido</h2>
-        <div id="empty-cart-state" class="premium-card rounded-lg p-8 text-center hidden">
-            <p class="text-xl font-black uppercase tracking-[0.12em] mb-3">Seu carrinho esta vazio</p>
-            <p class="text-stone-400 mb-6">Adicione um item do cardapio para liberar os dados do pedido.</p>
-            <button onclick="navigate('menu')" class="premium-button px-6 py-3 rounded-full text-xs font-black tracking-[0.18em] uppercase transition">Ver cardapio</button>
+    <section id="page-cart" class="flex-1 p-6 max-w-3xl mx-auto w-full hidden fade-in py-16">
+        <h2 class="text-3xl font-serif text-center text-white tracking-widest uppercase border-b border-gray-800 pb-4 mb-10">Seu Pedido</h2>
+        
+        <!-- Carrinho Vazio -->
+        <div id="empty-cart-message" class="text-center py-16 hidden">
+            <p class="text-gray-500 mb-8 font-serif italic text-lg">Seu carrinho aguarda por deliciosas escolhas.</p>
+            <button onclick="navigate('menu')" class="border border-akira-gold text-akira-gold px-8 py-3 text-xs tracking-[0.2em] uppercase hover:bg-akira-gold hover:text-black transition">
+                Retornar ao Menu
+            </button>
         </div>
-        <div id="cart-items" class="space-y-4 mb-8"></div>
 
-        <div id="cart-checkout">
-        <div class="toro-border pb-6 mb-6">
-            <div class="flex justify-between items-center text-xl font-bold">
-                <span>Total:</span>
-                <span id="cart-total">R$ 0,00</span>
+        <!-- Itens do Carrinho -->
+        <div id="cart-items-container">
+            <div id="cart-items" class="flex flex-col gap-4 mb-10">
+                <!-- Renderizado via JS -->
+            </div>
+
+            <div class="border-t border-b border-gray-800 py-6 mb-10">
+                <div class="flex justify-between items-center text-2xl font-serif text-white">
+                    <span>Total</span>
+                    <span id="cart-total" class="text-akira-gold">R$ 0,00</span>
+                </div>
             </div>
         </div>
 
-        <div class="space-y-6">
+        <!-- Formulário Checkout -->
+        <div id="checkout-form-container" class="space-y-6 bg-akira-panel p-8 rounded-sm border border-gray-800/50">
             <div>
-                <label class="block text-sm text-stone-400 mb-2">Modo de Entrega</label>
-                <select id="delivery-mode" class="bg-[#111] text-white border border-stone-700 p-3 rounded w-full" onchange="toggleAddressField()">
-                    <option value="Entrega">Entrega</option>
-                    <option value="Retirar no local">Retirar no local</option>
+                <label class="block text-xs uppercase tracking-widest text-gray-400 mb-2">Modo de Entrega</label>
+                <select id="delivery-mode" class="bg-transparent text-white border-b border-gray-700 pb-2 w-full focus:outline-none focus:border-akira-gold appearance-none cursor-pointer text-sm" onchange="toggleAddressField()">
+                    <option value="Entrega" class="bg-akira-bg">Entrega</option>
+                    <option value="Retirar no local" class="bg-akira-bg">Retirar no local</option>
                 </select>
             </div>
 
             <div id="address-container">
-                <label class="block text-sm text-stone-400 mb-2">Endereço de Entrega</label>
-                <input type="text" id="customer-address" placeholder="Rua, número, bairro, referência" class="bg-[#111] text-white border border-stone-700 p-3 rounded w-full focus:outline-none focus:border-red-300">
+                <label class="block text-xs uppercase tracking-widest text-gray-400 mb-2">Endereço de Entrega</label>
+                <input type="text" id="customer-address" placeholder="Rua, Número, Bairro, Referência" class="bg-transparent text-white border-b border-gray-700 pb-2 w-full focus:outline-none focus:border-akira-gold text-sm placeholder-gray-600">
             </div>
 
             <div>
-                <label class="block text-sm text-stone-400 mb-2">Forma de Pagamento</label>
-                <select id="payment-method" class="bg-[#111] text-white border border-stone-700 p-3 rounded w-full"></select>
+                <label class="block text-xs uppercase tracking-widest text-gray-400 mb-2">Forma de Pagamento</label>
+                <select id="payment-method" class="bg-transparent text-white border-b border-gray-700 pb-2 w-full focus:outline-none focus:border-akira-gold appearance-none cursor-pointer text-sm">
+                    <!-- Preenchido via JS -->
+                </select>
             </div>
 
             <div>
-                <label class="block text-sm text-stone-400 mb-2">Observacoes do Pedido</label>
-                <textarea id="order-notes" rows="3" placeholder="Ex: sem cebolinha, trocar molho, ponto do prato..." class="bg-[#111] text-white border border-stone-700 p-3 rounded w-full focus:outline-none focus:border-red-300"></textarea>
+                <label class="block text-xs uppercase tracking-widest text-gray-400 mb-2">Observações (Opcional)</label>
+                <textarea id="order-notes" rows="1" placeholder="Ex: Sem cebolinha, troco para R$100..." class="bg-transparent text-white border-b border-gray-700 pb-2 w-full focus:outline-none focus:border-akira-gold text-sm placeholder-gray-600 resize-none"></textarea>
             </div>
 
-            <button id="btn-send-order" onclick="sendOrder()" class="w-full premium-button font-bold py-4 rounded transition uppercase tracking-wider">
-                Enviar Pedido via WhatsApp
+            <button id="btn-send-order" onclick="sendOrder()" class="w-full bg-akira-gold text-black font-bold py-4 mt-6 text-xs uppercase tracking-[0.2em] hover:bg-white transition">
+                Finalizar via WhatsApp
             </button>
-            <p id="closed-warning" class="text-red-400 text-center text-sm hidden">A loja está fechada no momento. Não é possível enviar pedidos.</p>
-        </div>
+            <p id="closed-warning" class="text-akira-red text-center text-xs tracking-widest uppercase hidden mt-4">Restaurante Fechado</p>
         </div>
     </section>
 
-    <section id="page-admin" class="flex-1 p-6 max-w-5xl mx-auto w-full hidden fade-in">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold uppercase tracking-widest">Painel de Controle</h2>
-            <button onclick="logoutAdmin()" class="text-sm text-red-400 hover:text-red-300">Sair</button>
+    <section id="page-admin" class="flex-1 p-6 max-w-6xl mx-auto w-full hidden fade-in py-12">
+        <div class="flex justify-between items-center mb-10 border-b border-gray-800 pb-4">
+            <h2 class="text-2xl font-serif text-akira-gold uppercase tracking-widest">Painel Administrativo</h2>
+            <button onclick="logoutAdmin()" class="text-xs uppercase tracking-widest text-gray-500 hover:text-white transition">Sair</button>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-8">
-            <div class="premium-card p-6 rounded-lg">
-                <h3 class="text-lg font-bold mb-4 border-b border-stone-700 pb-2">Configurações da Loja</h3>
-                <div class="space-y-4">
+        <div class="grid md:grid-cols-2 gap-10">
+            <!-- Configs -->
+            <div class="bg-akira-panel p-8 border border-gray-800/50 rounded-sm">
+                <h3 class="text-sm font-bold mb-6 text-white uppercase tracking-widest">Configurações Gerais</h3>
+                <div class="space-y-6">
                     <div>
-                        <label class="block text-sm text-stone-400">Nome do Restaurante</label>
-                        <input type="text" id="adm-store-name" class="w-full bg-black border border-stone-700 p-2 text-white">
+                        <label class="block text-xs text-gray-500 uppercase tracking-widest mb-1">Nome</label>
+                        <input type="text" id="adm-store-name" class="w-full bg-transparent border-b border-gray-700 p-2 text-white focus:outline-none focus:border-akira-gold text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm text-stone-400">Número do WhatsApp (Ex: 5511999999999)</label>
-                        <input type="text" id="adm-whatsapp" class="w-full bg-black border border-stone-700 p-2 text-white">
+                        <label class="block text-xs text-gray-500 uppercase tracking-widest mb-1">WhatsApp (Apenas números)</label>
+                        <input type="text" id="adm-whatsapp" class="w-full bg-transparent border-b border-gray-700 p-2 text-white focus:outline-none focus:border-akira-gold text-sm">
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm text-stone-400">Horário Abertura</label>
-                            <input type="time" id="adm-time-open" class="w-full bg-black border border-stone-700 p-2 text-white">
+                            <label class="block text-xs text-gray-500 uppercase tracking-widest mb-1">Abre às</label>
+                            <input type="time" id="adm-time-open" class="w-full bg-transparent border-b border-gray-700 p-2 text-white focus:outline-none text-sm">
                         </div>
                         <div>
-                            <label class="block text-sm text-stone-400">Horário Fechamento</label>
-                            <input type="time" id="adm-time-close" class="w-full bg-black border border-stone-700 p-2 text-white">
-                            <div class="mt-4">
-                                <label class="block text-sm text-stone-400 mb-2">Dias de Funcionamento</label>
-                                <div id="adm-operating-days" class="grid grid-cols-2 gap-2 text-sm text-stone-300"></div>
-                            </div>
+                            <label class="block text-xs text-gray-500 uppercase tracking-widest mb-1">Fecha às</label>
+                            <input type="time" id="adm-time-close" class="w-full bg-transparent border-b border-gray-700 p-2 text-white focus:outline-none text-sm">
                         </div>
                     </div>
-                    <button onclick="saveSettings()" class="premium-button px-4 py-2 rounded text-sm font-bold w-full">Salvar Configurações</button>
+                    <button onclick="saveSettings()" class="bg-gray-800 text-white px-4 py-3 text-xs uppercase tracking-widest w-full hover:bg-gray-700 transition">Salvar Info</button>
                 </div>
             </div>
 
-            <div class="premium-card p-6 rounded-lg">
-                <h3 class="text-lg font-bold mb-4 border-b border-stone-700 pb-2">Novo Produto</h3>
-                <form id="form-product" onsubmit="saveProduct(event)" class="space-y-4">
+            <!-- Cadastro -->
+            <div class="bg-akira-panel p-8 border border-gray-800/50 rounded-sm">
+                <h3 class="text-sm font-bold mb-6 text-white uppercase tracking-widest">Gerenciar Produto</h3>
+                <form id="form-product" onsubmit="saveProduct(event)" class="space-y-5">
                     <input type="hidden" id="adm-prod-id">
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-sm text-stone-400">Nome</label>
-                            <input type="text" id="adm-prod-name" required class="w-full bg-black border border-stone-700 p-2 text-white">
+                            <label class="block text-xs text-gray-500 uppercase tracking-widest mb-1">Nome</label>
+                            <input type="text" id="adm-prod-name" required class="w-full bg-transparent border-b border-gray-700 p-2 text-white focus:outline-none focus:border-akira-gold text-sm">
                         </div>
                         <div>
-                            <label class="block text-sm text-stone-400">Preço (R$)</label>
-                            <input type="number" step="0.01" id="adm-prod-price" required class="w-full bg-black border border-stone-700 p-2 text-white">
+                            <label class="block text-xs text-gray-500 uppercase tracking-widest mb-1">Preço (R$)</label>
+                            <input type="number" step="0.01" id="adm-prod-price" required class="w-full bg-transparent border-b border-gray-700 p-2 text-white focus:outline-none focus:border-akira-gold text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs text-gray-500 uppercase tracking-widest mb-1">Categoria</label>
+                            <input type="text" id="adm-prod-cat" required placeholder="Ex: Hot Rolls" class="w-full bg-transparent border-b border-gray-700 p-2 text-white focus:outline-none focus:border-akira-gold text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 uppercase tracking-widest mb-1">Qtd/Peso (Ex: 10 un)</label>
+                            <input type="text" id="adm-prod-weight" class="w-full bg-transparent border-b border-gray-700 p-2 text-white focus:outline-none focus:border-akira-gold text-sm">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm text-stone-400">Categoria</label>
-                        <select id="adm-prod-cat" class="w-full bg-black border border-stone-700 p-2 text-white">
-                            <option>Sushi</option><option>Temaki</option><option>Combinados</option><option>Bebidas</option><option>Porções</option>
-                        </select>
+                        <label class="block text-xs text-gray-500 uppercase tracking-widest mb-1">URL Imagem</label>
+                        <input type="url" id="adm-prod-img" class="w-full bg-transparent border-b border-gray-700 p-2 text-white focus:outline-none focus:border-akira-gold text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm text-stone-400">Imagem do Produto</label>
-                        <input type="file" id="adm-prod-img" accept="image/*" class="w-full bg-black border border-stone-700 p-2 text-white file:mr-4 file:border-0 file:bg-red-800 file:px-3 file:py-2 file:text-sm file:font-bold file:text-white hover:file:bg-red-700">
-                        <input type="hidden" id="adm-prod-current-img">
-                        <div id="adm-prod-img-preview" class="mt-3 hidden items-center gap-3 rounded border border-stone-800 bg-black/35 p-3">
-                            <img id="adm-prod-img-preview-photo" src="" alt="Prévia da imagem" class="h-16 w-16 rounded object-cover">
-                            <p id="adm-prod-img-preview-text" class="text-xs text-stone-400">Imagem selecionada</p>
-                        </div>
+                        <label class="block text-xs text-gray-500 uppercase tracking-widest mb-1">Descrição</label>
+                        <input type="text" id="adm-prod-desc" class="w-full bg-transparent border-b border-gray-700 p-2 text-white focus:outline-none focus:border-akira-gold text-sm">
                     </div>
-                    <div>
-                        <label class="block text-sm text-stone-400">Descrição/Ingredientes</label>
-                        <textarea id="adm-prod-desc" class="w-full bg-black border border-stone-700 p-2 text-white text-sm" rows="2"></textarea>
-                    </div>
-                    <button type="submit" class="premium-button px-4 py-2 rounded text-sm font-bold w-full" id="btn-save-prod">Adicionar Produto</button>
+                    <button type="submit" class="bg-akira-gold text-black font-bold px-4 py-3 text-xs uppercase tracking-[0.2em] w-full hover:bg-white transition" id="btn-save-prod">Adicionar</button>
                 </form>
             </div>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-8 mt-8">
-            <div class="premium-card p-6 rounded-lg">
-                <h3 class="text-lg font-bold mb-4 border-b border-stone-700 pb-2">Contatos do Site</h3>
-                <form id="form-contact" onsubmit="saveContact(event)" class="space-y-3 mb-5">
-                    <input type="hidden" id="adm-contact-id">
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="text" id="adm-contact-label" placeholder="Nome" required class="w-full bg-black border border-stone-700 p-2 text-white">
-                        <input type="text" id="adm-contact-value" placeholder="Contato" required class="w-full bg-black border border-stone-700 p-2 text-white">
-                    </div>
-                    <button type="submit" id="btn-save-contact" class="premium-button px-4 py-2 rounded text-sm font-bold w-full">Adicionar Contato</button>
-                </form>
-                <div id="admin-contact-list" class="space-y-2"></div>
-            </div>
-
-            <div class="premium-card p-6 rounded-lg">
-                <h3 class="text-lg font-bold mb-4 border-b border-stone-700 pb-2">Formas de Pagamento</h3>
-                <form id="form-payment" onsubmit="savePaymentMethod(event)" class="space-y-3 mb-5">
-                    <input type="hidden" id="adm-payment-index">
-                    <input type="text" id="adm-payment-name" placeholder="Ex: Pix, Dinheiro, Cartao" required class="w-full bg-black border border-stone-700 p-2 text-white">
-                    <button type="submit" id="btn-save-payment" class="premium-button px-4 py-2 rounded text-sm font-bold w-full">Adicionar Pagamento</button>
-                </form>
-                <div id="admin-payment-list" class="space-y-2"></div>
-            </div>
-        </div>
-
-        <div class="mt-8 premium-card p-6 rounded-lg">
-            <h3 class="text-lg font-bold mb-4 border-b border-stone-700 pb-2">Produtos Cadastrados</h3>
+        <!-- Tabela -->
+        <div class="mt-10 bg-akira-panel p-8 border border-gray-800/50 rounded-sm">
+            <h3 class="text-sm font-bold mb-6 text-white uppercase tracking-widest">Catálogo</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <thead>
-                        <tr class="text-stone-500 border-b border-stone-800">
-                            <th class="py-2">Img</th>
-                            <th>Nome</th>
-                            <th>Categoria</th>
-                            <th>Preço</th>
-                            <th class="text-right">Ações</th>
+                        <tr class="text-gray-500 text-xs uppercase tracking-widest border-b border-gray-800">
+                            <th class="pb-3 font-normal">Img</th>
+                            <th class="pb-3 font-normal">Nome</th>
+                            <th class="pb-3 font-normal">Categoria</th>
+                            <th class="pb-3 font-normal">Preço</th>
+                            <th class="pb-3 font-normal text-right">Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="admin-product-list"></tbody>
+                    <tbody id="admin-product-list" class="text-gray-300"></tbody>
                 </table>
             </div>
         </div>
     </section>
 
-    <div id="login-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center hidden z-50 p-5">
-        <div class="premium-card p-8 rounded-lg max-w-sm w-full">
-            <h3 class="text-xl font-bold mb-4 uppercase text-center">Acesso Restrito</h3>
-            <input type="text" id="login-user" placeholder="Login" class="w-full bg-black border border-stone-700 p-3 mb-4 text-white">
-            <input type="password" id="login-pass" placeholder="Senha" class="w-full bg-black border border-stone-700 p-3 mb-6 text-white">
+    <!-- Modal Login -->
+    <div id="login-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center hidden z-50">
+        <div class="bg-akira-panel p-10 border border-gray-800 max-w-sm w-full">
+            <h3 class="text-xl font-serif text-akira-gold mb-8 text-center tracking-widest">Acesso Restrito</h3>
+            <input type="text" id="login-user" placeholder="Login" class="w-full bg-transparent border-b border-gray-700 pb-2 mb-6 text-white focus:outline-none focus:border-akira-gold text-sm placeholder-gray-600">
+            <input type="password" id="login-pass" placeholder="Senha" class="w-full bg-transparent border-b border-gray-700 pb-2 mb-8 text-white focus:outline-none focus:border-akira-gold text-sm placeholder-gray-600">
             <div class="flex gap-4">
-                <button onclick="document.getElementById('login-modal').classList.add('hidden')" class="w-1/2 p-3 border border-stone-600 text-stone-400 rounded">Cancelar</button>
-                <button onclick="authenticate()" class="w-1/2 p-3 premium-button font-bold rounded">Entrar</button>
+                <button onclick="document.getElementById('login-modal').classList.add('hidden')" class="w-1/2 p-3 text-xs tracking-widest uppercase text-gray-500 hover:text-white">Voltar</button>
+                <button onclick="authenticate()" class="w-1/2 p-3 bg-akira-gold text-black font-bold text-xs tracking-widest uppercase hover:bg-white transition">Entrar</button>
             </div>
         </div>
     </div>
 
+    <!-- Toast Notification Elegante -->
+    <div id="toast-notification" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-akira-panel border border-akira-gold text-akira-gold text-xs tracking-[0.2em] uppercase px-8 py-4 shadow-2xl transition-all duration-300 opacity-0 pointer-events-none transform translate-y-4 z-50 flex items-center gap-3">
+        <span class="w-2 h-2 rounded-full bg-akira-red inline-block"></span>
+        <span id="toast-message">Adicionado com sucesso</span>
+    </div>
+
     <script>
+        // Dados Mock atualizados com as imagens do Akira Sushi
         const defaultSettings = {
             storeName: "AKIRA SUSHI",
             whatsapp: "5511999999999",
             openHour: "18:00",
             closeHour: "23:59",
-            operatingDays: [0, 1, 2, 3, 4, 5, 6],
-            contacts: [
-                { id: 1, label: "WhatsApp", value: "5511999999999" },
-                { id: 2, label: "Instagram", value: "@akirasushi" }
-            ],
-            paymentMethods: ["Dinheiro", "Cartão de Crédito", "Cartão de Débito", "Pix"]
+            paymentMethods: ["Pix", "Cartão de Crédito", "Cartão de Débito", "Dinheiro"]
         };
-
-        const weekDays = [
-            { value: 0, label: "Domingo", short: "Dom" },
-            { value: 1, label: "Segunda", short: "Seg" },
-            { value: 2, label: "Terca", short: "Ter" },
-            { value: 3, label: "Quarta", short: "Qua" },
-            { value: 4, label: "Quinta", short: "Qui" },
-            { value: 5, label: "Sexta", short: "Sex" },
-            { value: 6, label: "Sabado", short: "Sab" }
-        ];
 
         const defaultProducts = [
-            { id: 1, name: "AKIRA ESPECIAL", price: 42.00, category: "Combinados", img: "https://images.unsplash.com/photo-1611143669185-af224c5e3252?auto=format&fit=crop&w=700&q=85", desc: "Seleção de niguiris, uramakis e sashimis com finalização da casa." },
-            { id: 2, name: "URAMAKI SALMÃO", price: 29.00, category: "Sushi", img: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=700&q=85", desc: "Arroz temperado, salmão fresco, cream cheese e gergelim." },
-            { id: 3, name: "TEMAKI SPICY", price: 32.00, category: "Temaki", img: "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=700&q=85", desc: "Cone crocante com salmão batido, cebolinha e toque picante." },
-            { id: 4, name: "MISSÔ SHIRU", price: 14.00, category: "Porções", img: "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=700&q=85", desc: "Caldo quente de missô com tofu, wakame e cebolinha." },
-            { id: 5, name: "CHÁ GELADO", price: 9.00, category: "Bebidas", img: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=700&q=85", desc: "Chá gelado cítrico para acompanhar peças frescas." }
+            { id: 1, name: "Philadelphia", price: 28.90, category: "Hot Rolls", weight: "10 un", img: "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=200&q=80", desc: "Salmão, Cream Cheese e Cebolinha. Quente, crocante e cheio de sabor." },
+            { id: 2, name: "Nacho", price: 29.90, category: "Hot Rolls", weight: "10 un", img: "https://images.unsplash.com/photo-1611143669185-af224c5e3252?auto=format&fit=crop&w=200&q=80", desc: "Salmão, Cream Cheese e Doritos." },
+            { id: 3, name: "Salmão Crispy", price: 32.00, category: "Temakis", weight: "1 un", img: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=200&q=80", desc: "Salmão cru ou grelhado com crispy de couve, cream cheese, cebolinha." },
+            { id: 4, name: "Salmão Grelhado", price: 31.00, category: "Temakis", weight: "1 un", img: "https://images.unsplash.com/photo-1558985250-27a406d64cb3?auto=format&fit=crop&w=200&q=80", desc: "Arroz, salmão grelhado, cream cheese, cebolinha." },
+            { id: 5, name: "Joe Crispy de Couve", price: 32.90, category: "Joes", weight: "10 un", img: "https://images.unsplash.com/photo-1617196034738-26c5f7c977ce?auto=format&fit=crop&w=200&q=80", desc: "Enrolado com salmão e crispy de couve, Cream cheese." },
+            { id: 6, name: "Joe Shimeji", price: 33.90, category: "Joes", weight: "10 un", img: "https://images.unsplash.com/photo-1583623025817-d180a2221d0a?auto=format&fit=crop&w=200&q=80", desc: "Salmão, shimeji, cream cheese e cebolinha." },
+            { id: 7, name: "Combo Love", price: 58.90, category: "Combos", weight: "27 peças", img: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?auto=format&fit=crop&w=200&q=80", desc: "4 Joe, 4 Uramaki, 4 Niguiri, 4 Hossomaki, 10 Hot Roll, 1 Mini Temaki + 1 Coca Lata." },
+            { id: 8, name: "Sushi Burger Salmão Cru", price: 45.90, category: "Especiais", weight: "1 un", img: "https://images.unsplash.com/photo-1615361200141-f45040f367be?auto=format&fit=crop&w=200&q=80", desc: "Empanado. Acompanha arroz, salmão cru, cebolinha, cream cheese." },
+            { id: 9, name: "Sushi Dog Salmão Cru", price: 52.90, category: "Especiais", weight: "1 un", img: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=200&q=80", desc: "Arroz empanado com recheio de salmão cru, cream cheese, cebola roxa." }
         ];
 
-        let settings = JSON.parse(localStorage.getItem("settings")) || defaultSettings;
-        let products = JSON.parse(localStorage.getItem("products")) || defaultProducts;
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-        if (products.some(product => ["SMASH BURGER", "DUPLO BACON", "FRITAS RÚSTICAS", "COCA-COLA LATA"].includes(fixEncodingText(product.name)))) {
-            products = defaultProducts;
-            localStorage.setItem("products", JSON.stringify(products));
-        }
-
-        settings = {
-            ...settings,
-            storeName: ["LANCHONETE", "LANCHONETE PREMIUM"].includes(fixEncodingText(settings.storeName).toUpperCase()) ? "AKIRA SUSHI" : fixEncodingText(settings.storeName),
-            operatingDays: Array.isArray(settings.operatingDays) ? settings.operatingDays.map(Number) : defaultSettings.operatingDays,
-            contacts: (settings.contacts || defaultSettings.contacts).map(contact => ({
-                id: contact.id || Date.now() + Math.random(),
-                label: fixEncodingText(contact.label),
-                value: fixEncodingText(contact.value)
-            })),
-            paymentMethods: (settings.paymentMethods || defaultSettings.paymentMethods).map(fixEncodingText)
-        };
-
-        products = products.map(product => ({
-            ...product,
-            name: fixEncodingText(product.name),
-            category: normalizeCategory(product.category),
-            desc: fixEncodingText(product.desc)
-        }));
+        let settings = JSON.parse(localStorage.getItem('settings')) || defaultSettings;
+        let products = JSON.parse(localStorage.getItem('products')) || defaultProducts;
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let currentFilter = 'Todos';
 
         document.addEventListener("DOMContentLoaded", () => {
             updateAppInfo();
-            renderSiteExtras();
             checkStoreStatus();
             renderPaymentMethods();
             updateCartBadge();
-            setupImageUploadPreview();
-            setInterval(checkStoreStatus, 60000);
+            buildCategories();
+            setInterval(checkStoreStatus, 60000); 
         });
 
+        // Controle de Telas
         function navigate(page) {
-            document.getElementById("page-home").classList.add("hidden");
-            document.getElementById("page-menu").classList.add("hidden");
-            document.getElementById("page-cart").classList.add("hidden");
-            document.getElementById("page-admin").classList.add("hidden");
-            document.getElementById(`page-${page}`).classList.remove("hidden");
+            document.getElementById('page-home').classList.add('hidden');
+            document.getElementById('page-menu').classList.add('hidden');
+            document.getElementById('page-cart').classList.add('hidden');
+            document.getElementById('page-admin').classList.add('hidden');
+            document.getElementById(`page-${page}`).classList.remove('hidden');
 
-            if (page === "menu") renderMenu();
-            if (page === "cart") renderCart();
-            window.scrollTo(0, 0);
+            if(page === 'menu') renderMenu();
+            if(page === 'cart') renderCart();
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
+        // Lógica de Horários
         function isStoreOpen() {
             const now = new Date();
-            if (!settings.operatingDays.includes(now.getDay())) return false;
             const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
-            const [openH, openM] = settings.openHour.split(":").map(Number);
-            const [closeH, closeM] = settings.closeHour.split(":").map(Number);
+            const [openH, openM] = settings.openHour.split(':').map(Number);
             const openTotalMinutes = openH * 60 + openM;
+            const [closeH, closeM] = settings.closeHour.split(':').map(Number);
             const closeTotalMinutes = closeH * 60 + closeM;
 
             if (closeTotalMinutes < openTotalMinutes) {
                 return currentTotalMinutes >= openTotalMinutes || currentTotalMinutes <= closeTotalMinutes;
+            } else {
+                return currentTotalMinutes >= openTotalMinutes && currentTotalMinutes <= closeTotalMinutes;
             }
-            return currentTotalMinutes >= openTotalMinutes && currentTotalMinutes <= closeTotalMinutes;
         }
 
         function checkStoreStatus() {
             const isOpen = isStoreOpen();
-            const badge = document.getElementById("store-status-badge");
-            const btnSend = document.getElementById("btn-send-order");
-            const closedWarning = document.getElementById("closed-warning");
+            const badge = document.getElementById('store-status-badge');
+            const btnSend = document.getElementById('btn-send-order');
+            const closedWarning = document.getElementById('closed-warning');
 
             if (isOpen) {
-                badge.textContent = "ABERTO AGORA";
-                badge.className = "inline-block px-4 py-1 rounded-full text-xs font-bold mb-8 bg-green-950/80 text-green-300 border border-green-700 tracking-widest";
-                btnSend.classList.remove("hidden");
-                closedWarning.classList.add("hidden");
+                badge.textContent = "Aberto Agora";
+                badge.className = "px-4 py-2 text-[10px] tracking-widest uppercase border border-green-800 text-green-500 bg-green-900/10";
+                btnSend.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnSend.disabled = false;
+                closedWarning.classList.add('hidden');
             } else {
-                badge.textContent = "FECHADO";
-                badge.className = "inline-block px-4 py-1 rounded-full text-xs font-bold mb-8 bg-red-950/80 text-red-300 border border-red-700 tracking-widest";
-                btnSend.classList.add("hidden");
-                closedWarning.classList.remove("hidden");
+                badge.textContent = "Fechado";
+                badge.className = "px-4 py-2 text-[10px] tracking-widest uppercase border border-red-800 text-red-500 bg-red-900/10";
+                btnSend.classList.add('opacity-50', 'cursor-not-allowed');
+                btnSend.disabled = true;
+                closedWarning.classList.remove('hidden');
             }
             return isOpen;
         }
 
         function updateAppInfo() {
-            document.getElementById("nav-logo").textContent = settings.storeName;
-            document.getElementById("display-contact").innerHTML = `WhatsApp: ${settings.whatsapp}`;
-            document.getElementById("display-hours").textContent = `${settings.openHour} às ${settings.closeHour}`;
+            document.getElementById('nav-logo').textContent = settings.storeName.split(' ')[0];
+            document.getElementById('display-contact').textContent = settings.whatsapp;
+            document.getElementById('display-hours').textContent = `${settings.openHour} às ${settings.closeHour}`;
         }
 
-        function renderSiteExtras() {
-            const contactsEl = document.getElementById("display-contacts");
-            contactsEl.innerHTML = settings.contacts.map(contact => `
-                <p><span class="text-red-200 font-bold">${contact.label}:</span> ${contact.value}</p>
-            `).join("");
-            document.getElementById("display-days").textContent = formatOperatingDays();
-            document.getElementById("display-hours").textContent = `${settings.openHour} as ${settings.closeHour}`;
-            renderHouseHighlights();
+        // Filtros e Categorias Dinâmicas
+        function buildCategories() {
+            const cats = ['Todos', ...new Set(products.map(p => p.category))];
+            const container = document.getElementById('category-filters');
+            container.innerHTML = '';
+            
+            cats.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.textContent = cat;
+                btn.className = `cat-btn text-xs tracking-[0.2em] uppercase transition pb-1 border-b-2 ${currentFilter === cat ? 'text-akira-gold border-akira-gold' : 'text-gray-500 border-transparent hover:text-white'}`;
+                btn.onclick = () => {
+                    currentFilter = cat;
+                    buildCategories(); // Re-render to update active state
+                    renderMenu();
+                };
+                container.appendChild(btn);
+            });
         }
 
-        function formatOperatingDays() {
-            const selected = weekDays.filter(day => settings.operatingDays.includes(day.value));
-            if (selected.length === 7) return "todos os dias";
-            if (selected.length === 0) return "sem dias ativos";
-            return selected.map(day => day.short).join(", ");
-        }
-
-        function renderHouseHighlights() {
-            const container = document.getElementById("house-highlights");
-            if (!container) return;
-            const highlights = products.slice(0, 3);
-            container.innerHTML = highlights.map(item => `
-                <div class="menu-card rounded-lg overflow-hidden transition duration-300">
-                    <img src="${item.img}" alt="${item.name}" class="w-full h-44 object-cover">
-                    <div class="p-5">
-                        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-red-200 mb-2">${normalizeCategory(item.category)}</p>
-                        <h4 class="font-black uppercase tracking-[0.08em]">${item.name}</h4>
-                        <p class="text-sm text-stone-400 mt-2">${item.desc || ""}</p>
-                        <div class="mt-4 flex items-center justify-between gap-3">
-                            <span class="text-yellow-200 font-black">R$ ${item.price.toFixed(2)}</span>
-                            <button onclick="addToCart(${item.id})" class="premium-button rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] transition">Adicionar</button>
-                        </div>
-                    </div>
-                </div>
-            `).join("");
-        }
-
-        function fixEncodingText(value) {
-            return String(value || "")
-                .replaceAll("Ã¡", "á")
-                .replaceAll("Ã ", "à")
-                .replaceAll("Ã£", "ã")
-                .replaceAll("Ã¢", "â")
-                .replaceAll("Ã©", "é")
-                .replaceAll("Ãª", "ê")
-                .replaceAll("Ã­", "í")
-                .replaceAll("Ã³", "ó")
-                .replaceAll("Ãµ", "õ")
-                .replaceAll("Ãº", "ú")
-                .replaceAll("Ã‡", "Ç")
-                .replaceAll("Ã§", "ç");
-        }
-
-        function normalizeCategory(category) {
-            return fixEncodingText(category)
-                .replace("Combos", "Combinados")
-                .replace("Lanches", "Sushi")
-                .replace("Porções", "Porções");
-        }
-
+        // Renderização do Cardápio (Estilo Lista Vertical Elegante)
         function renderMenu() {
-            const grid = document.getElementById("menu-grid");
-            const search = document.getElementById("search-input").value.toLowerCase();
-            const filter = document.getElementById("filter-category").value;
+            const list = document.getElementById('menu-list');
+            const search = document.getElementById('search-input').value.toLowerCase();
             const open = isStoreOpen();
 
-            grid.innerHTML = "";
+            list.innerHTML = '';
 
-            const filtered = products.filter(p => {
-                const desc = p.desc || "";
-                const matchSearch = p.name.toLowerCase().includes(search) || desc.toLowerCase().includes(search);
-                const matchFilter = filter === "Todos" || normalizeCategory(p.category) === filter;
-                return matchSearch && matchFilter;
+            // Group by category if "Todos" is selected to add elegant dividers
+            let catsToRender = currentFilter === 'Todos' ? [...new Set(products.map(p => p.category))] : [currentFilter];
+
+            catsToRender.forEach(cat => {
+                let itemsInCat = products.filter(p => p.category === cat && 
+                    (p.name.toLowerCase().includes(search) || p.desc.toLowerCase().includes(search))
+                );
+
+                if (itemsInCat.length > 0) {
+                    if (currentFilter === 'Todos') {
+                        list.innerHTML += `<h3 class="menu-divider">${cat.toUpperCase()}</h3>`;
+                    }
+
+                    itemsInCat.forEach(p => {
+                        list.innerHTML += `
+                            <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 py-4 border-b border-gray-900/50 group hover:bg-white/[0.02] transition p-4 rounded">
+                                <!-- Info Esquerda -->
+                                <div class="flex items-center gap-6 w-full md:w-2/3">
+                                    <div class="w-20 h-16 md:w-24 md:h-16 flex-shrink-0 overflow-hidden rounded-sm">
+                                        <img src="${p.img || 'https://via.placeholder.com/150x100/111/333?text=Sushi'}" alt="${p.name}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700">
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="flex items-baseline gap-3 mb-1">
+                                            <h4 class="font-serif text-white tracking-widest uppercase text-sm">${p.name}</h4>
+                                            ${p.weight ? `<span class="text-[10px] text-akira-red tracking-widest border border-akira-red/30 px-1 rounded-sm">${p.weight}</span>` : ''}
+                                        </div>
+                                        <p class="text-gray-500 text-xs leading-relaxed max-w-md">${p.desc}</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Info Direita -->
+                                <div class="flex flex-row md:flex-col items-center md:items-end justify-between w-full md:w-auto mt-4 md:mt-0 gap-4">
+                                    <span class="text-akira-gold font-serif text-lg tracking-wider">R$ ${p.price.toFixed(2)}</span>
+                                    <button onclick="addToCart(${p.id})" class="text-xs uppercase tracking-widest border border-gray-700 text-gray-300 px-4 py-2 hover:border-akira-gold hover:text-akira-gold transition ${!open ? 'opacity-30 cursor-not-allowed' : ''}" ${!open ? 'disabled' : ''}>
+                                        Adicionar
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
             });
 
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 premium-card rounded-lg p-8 text-center text-stone-400">Nenhum item encontrado.</div>`;
-                return;
+            if(list.innerHTML === '') {
+                list.innerHTML = '<p class="text-center text-gray-600 font-serif italic my-10">Nenhum prato encontrado.</p>';
             }
+        }
 
-            filtered.forEach(p => {
-                const card = document.createElement("div");
-                card.className = "menu-card rounded-lg overflow-hidden transition duration-300 flex flex-col";
-                card.innerHTML = `
-                    <div class="relative h-56 overflow-hidden bg-stone-950">
-                        <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover transition duration-500 hover:scale-105">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                        <span class="absolute left-4 top-4 rounded-full bg-black/65 border border-white/10 px-3 py-1 text-[10px] font-black tracking-[0.2em] uppercase text-red-200">${normalizeCategory(p.category)}</span>
-                    </div>
-                    <div class="p-5 flex flex-col grow">
-                        <div class="flex items-start justify-between gap-4 mb-3">
-                            <h4 class="text-lg font-black tracking-[0.08em] uppercase leading-tight">${p.name}</h4>
-                            <span class="shrink-0 text-yellow-200 font-black">R$ ${p.price.toFixed(2)}</span>
-                        </div>
-                        <p class="text-sm text-stone-400 leading-relaxed mb-5">${p.desc || ""}</p>
-                        <button onclick="addToCart(${p.id})" class="mt-auto premium-button rounded-full px-4 py-3 text-xs font-black uppercase tracking-[0.18em] transition disabled:opacity-50 disabled:cursor-not-allowed" ${!open ? "disabled" : ""}>
-                            Adicionar
-                        </button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
+        // Lógica de Carrinho e Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-message').textContent = message;
+            
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+            }, 2500);
         }
 
         function addToCart(id) {
-            if (!isStoreOpen()) { alert("A loja está fechada."); return; }
+            if (!isStoreOpen()) { 
+                showToast("Restaurante fechado no momento."); 
+                return; 
+            }
             const prod = products.find(p => p.id === id);
             const itemIndex = cart.findIndex(c => c.id === id);
-
-            if (itemIndex > -1) cart[itemIndex].qtd += 1;
-            else cart.push({ ...prod, qtd: 1 });
-
+            
+            if (itemIndex > -1) { cart[itemIndex].qtd += 1; } 
+            else { cart.push({ ...prod, qtd: 1 }); }
+            
             saveCart();
-            renderMenu();
-            alert(`${prod.name} adicionado ao carrinho!`);
+            showToast(`${prod.name} adicionado`);
         }
 
         function updateQty(id, delta) {
             const itemIndex = cart.findIndex(c => c.id === id);
-            if (itemIndex > -1) {
+            if(itemIndex > -1) {
                 cart[itemIndex].qtd += delta;
-                if (cart[itemIndex].qtd <= 0) cart.splice(itemIndex, 1);
+                if(cart[itemIndex].qtd <= 0) cart.splice(itemIndex, 1);
             }
             saveCart();
             renderCart();
         }
 
         function saveCart() {
-            localStorage.setItem("cart", JSON.stringify(cart));
+            localStorage.setItem('cart', JSON.stringify(cart));
             updateCartBadge();
         }
 
         function updateCartBadge() {
-            const badge = document.getElementById("cart-badge");
+            const badge = document.getElementById('cart-badge');
             const totalItems = cart.reduce((acc, item) => acc + item.qtd, 0);
-            if (totalItems > 0) {
+            if(totalItems > 0) {
                 badge.textContent = totalItems;
-                badge.classList.remove("hidden");
+                badge.classList.remove('hidden');
             } else {
-                badge.classList.add("hidden");
+                badge.classList.add('hidden');
             }
         }
 
         function renderCart() {
-            const container = document.getElementById("cart-items");
-            const totalEl = document.getElementById("cart-total");
-            const emptyState = document.getElementById("empty-cart-state");
-            const checkout = document.getElementById("cart-checkout");
-            container.innerHTML = "";
-
-            if (cart.length === 0) {
-                emptyState.classList.remove("hidden");
-                checkout.classList.add("hidden");
-                container.classList.add("hidden");
-                container.innerHTML = '<p class="text-stone-500 italic">Seu carrinho está vazio.</p>';
-                totalEl.textContent = "R$ 0,00";
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            const emptyMsg = document.getElementById('empty-cart-message');
+            const itemsContainer = document.getElementById('cart-items-container');
+            const checkoutForm = document.getElementById('checkout-form-container');
+            
+            container.innerHTML = '';
+            
+            if(cart.length === 0) {
+                emptyMsg.classList.remove('hidden');
+                itemsContainer.classList.add('hidden');
+                checkoutForm.classList.add('hidden');
                 return;
             }
 
-            emptyState.classList.add("hidden");
-            checkout.classList.remove("hidden");
-            container.classList.remove("hidden");
+            emptyMsg.classList.add('hidden');
+            itemsContainer.classList.remove('hidden');
+            checkoutForm.classList.remove('hidden');
+
             let total = 0;
             cart.forEach(item => {
                 const sub = item.price * item.qtd;
                 total += sub;
                 container.innerHTML += `
-                    <div class="flex justify-between items-center premium-card p-3 rounded-lg">
-                        <div>
-                            <p class="font-bold text-sm tracking-wider uppercase">${item.name}</p>
-                            <p class="text-stone-500 text-xs">R$ ${item.price.toFixed(2)} un.</p>
+                    <div class="flex justify-between items-center py-4 border-b border-gray-800/50">
+                        <div class="flex flex-col">
+                            <p class="font-serif text-white text-sm tracking-widest uppercase">${item.name}</p>
+                            <p class="text-akira-gold text-xs mt-1">R$ ${(item.price).toFixed(2)}</p>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <button onclick="updateQty(${item.id}, -1)" class="w-8 h-8 rounded-full bg-stone-800 text-white font-bold flex items-center justify-center hover:bg-stone-700">-</button>
-                            <span class="w-4 text-center font-bold">${item.qtd}</span>
-                            <button onclick="updateQty(${item.id}, 1)" class="w-8 h-8 rounded-full bg-red-700 text-white font-bold flex items-center justify-center hover:bg-red-600">+</button>
+                        <div class="flex items-center gap-4">
+                            <button onclick="updateQty(${item.id}, -1)" class="w-6 h-6 rounded-full border border-gray-600 text-gray-400 flex items-center justify-center hover:text-white hover:border-white transition">-</button>
+                            <span class="w-4 text-center text-sm font-bold">${item.qtd}</span>
+                            <button onclick="updateQty(${item.id}, 1)" class="w-6 h-6 rounded-full border border-gray-600 text-gray-400 flex items-center justify-center hover:text-white hover:border-white transition">+</button>
                         </div>
                     </div>
                 `;
@@ -741,356 +623,172 @@
         }
 
         function toggleAddressField() {
-            const mode = document.getElementById("delivery-mode").value;
-            const container = document.getElementById("address-container");
-            container.classList.toggle("hidden", mode === "Retirar no local");
+            const mode = document.getElementById('delivery-mode').value;
+            const container = document.getElementById('address-container');
+            if(mode === 'Retirar no local') {
+                container.classList.add('hidden');
+            } else {
+                container.classList.remove('hidden');
+            }
         }
 
         function renderPaymentMethods() {
-            const select = document.getElementById("payment-method");
-            select.innerHTML = settings.paymentMethods.map(m => `<option value="${m}">${m}</option>`).join("");
+            const select = document.getElementById('payment-method');
+            select.innerHTML = settings.paymentMethods.map(m => `<option value="${m}" class="bg-akira-bg">${m}</option>`).join('');
         }
 
+        // WhatsApp Checkout
         function getGreeting() {
             const hour = new Date().getHours();
-            if (hour >= 5 && hour < 12) return "Bom dia!";
-            if (hour >= 12 && hour < 18) return "Boa tarde!";
+            if(hour >= 5 && hour < 12) return "Bom dia!";
+            if(hour >= 12 && hour < 18) return "Boa tarde!";
             return "Boa noite!";
         }
 
         function sendOrder() {
-            if (!isStoreOpen()) {
-                alert("A loja está fechada. Não é possível enviar pedido.");
-                return;
-            }
-            if (cart.length === 0) {
-                alert("Seu carrinho está vazio.");
-                return;
-            }
+            if(!isStoreOpen()) return;
 
-            const mode = document.getElementById("delivery-mode").value;
-            const address = document.getElementById("customer-address").value;
-            const payment = document.getElementById("payment-method").value;
-            const notes = document.getElementById("order-notes").value.trim();
+            const mode = document.getElementById('delivery-mode').value;
+            const address = document.getElementById('customer-address').value;
+            const payment = document.getElementById('payment-method').value;
+            const notes = document.getElementById('order-notes').value.trim();
 
-            if (mode === "Entrega" && address.trim() === "") {
-                alert("Por favor, preencha o endereço de entrega.");
+            if(mode === 'Entrega' && address.trim() === '') {
+                showToast("Preencha o endereço de entrega");
                 return;
             }
 
-            let msg = `${getGreeting()}\n*Novo Pedido*\n\n`;
+            let msg = `${getGreeting()}\n*Pedido - ${settings.storeName}*\n\n`;
             let total = 0;
-
+            
             cart.forEach(item => {
-                msg += `${item.qtd}x ${item.name}\n`;
+                msg += `${item.qtd}x ${item.name} (R$ ${(item.price * item.qtd).toFixed(2)})\n`;
                 total += item.price * item.qtd;
             });
 
             msg += `\n*Total:* R$ ${total.toFixed(2)}\n`;
-            msg += `*Forma de pagamento:* ${payment}\n`;
-            if (notes) msg += `*Observacoes:* ${notes}\n`;
-            msg += mode === "Entrega" ? `*Endereço de entrega:* ${address}` : "*Retirada no local*";
+            if (notes) msg += `*Obs:* ${notes}\n`;
+            msg += `*Pagamento:* ${payment}\n`;
+            if(mode === 'Entrega') msg += `*Endereço:* ${address}`;
+            else msg += `*Retirada no local*`;
 
             const encodedMsg = encodeURIComponent(msg);
-            const phone = settings.whatsapp.replace(/\D/g, "");
-            window.open(`https://wa.me/${phone}?text=${encodedMsg}`, "_blank");
-
+            const phone = settings.whatsapp.replace(/\D/g, ''); 
+            window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
+            
             cart = [];
             saveCart();
-            document.getElementById("customer-address").value = "";
-            document.getElementById("order-notes").value = "";
-            navigate("home");
+            document.getElementById('customer-address').value = '';
+            document.getElementById('order-notes').value = '';
+            navigate('home');
         }
 
-        function showAdminLogin() {
-            document.getElementById("login-modal").classList.remove("hidden");
-        }
+        // Admin
+        function showAdminLogin() { document.getElementById('login-modal').classList.remove('hidden'); }
 
         function authenticate() {
-            const u = document.getElementById("login-user").value;
-            const p = document.getElementById("login-pass").value;
-            if (u === "ADM123" && p === "Login@123") {
-                document.getElementById("login-modal").classList.add("hidden");
-                document.getElementById("login-user").value = "";
-                document.getElementById("login-pass").value = "";
+            const u = document.getElementById('login-user').value;
+            const p = document.getElementById('login-pass').value;
+            if(u === 'ADM123' && p === 'Login@123') {
+                document.getElementById('login-modal').classList.add('hidden');
+                document.getElementById('login-user').value = '';
+                document.getElementById('login-pass').value = '';
                 loadAdminData();
-                navigate("admin");
+                navigate('admin');
             } else {
-                alert("Credenciais incorretas.");
+                showToast("Acesso Negado");
             }
         }
 
-        function logoutAdmin() {
-            navigate("home");
-        }
+        function logoutAdmin() { navigate('home'); }
 
         function loadAdminData() {
-            document.getElementById("adm-store-name").value = settings.storeName;
-            document.getElementById("adm-whatsapp").value = settings.whatsapp;
-            document.getElementById("adm-time-open").value = settings.openHour;
-            document.getElementById("adm-time-close").value = settings.closeHour;
-            renderOperatingDaysAdmin();
-            renderAdminContacts();
-            renderAdminPayments();
+            document.getElementById('adm-store-name').value = settings.storeName;
+            document.getElementById('adm-whatsapp').value = settings.whatsapp;
+            document.getElementById('adm-time-open').value = settings.openHour;
+            document.getElementById('adm-time-close').value = settings.closeHour;
             renderAdminProducts();
         }
 
         function saveSettings() {
-            settings.storeName = document.getElementById("adm-store-name").value;
-            settings.whatsapp = document.getElementById("adm-whatsapp").value;
-            settings.openHour = document.getElementById("adm-time-open").value;
-            settings.closeHour = document.getElementById("adm-time-close").value;
-            settings.operatingDays = Array.from(document.querySelectorAll(".adm-day-checkbox:checked")).map(input => Number(input.value));
-
-            localStorage.setItem("settings", JSON.stringify(settings));
+            settings.storeName = document.getElementById('adm-store-name').value;
+            settings.whatsapp = document.getElementById('adm-whatsapp').value;
+            settings.openHour = document.getElementById('adm-time-open').value;
+            settings.closeHour = document.getElementById('adm-time-close').value;
+            localStorage.setItem('settings', JSON.stringify(settings));
             updateAppInfo();
-            renderSiteExtras();
             checkStoreStatus();
-            alert("Configurações salvas!");
-        }
-
-        function saveSettingsToStorage() {
-            localStorage.setItem("settings", JSON.stringify(settings));
-            updateAppInfo();
-            renderSiteExtras();
-            renderPaymentMethods();
-            checkStoreStatus();
-        }
-
-        function renderOperatingDaysAdmin() {
-            const container = document.getElementById("adm-operating-days");
-            if (!container) return;
-            container.innerHTML = weekDays.map(day => `
-                <label class="flex items-center gap-2 rounded border border-stone-800 bg-black/35 px-3 py-2">
-                    <input type="checkbox" class="adm-day-checkbox accent-red-700" value="${day.value}" ${settings.operatingDays.includes(day.value) ? "checked" : ""}>
-                    <span>${day.label}</span>
-                </label>
-            `).join("");
-        }
-
-        function renderAdminContacts() {
-            const list = document.getElementById("admin-contact-list");
-            if (!list) return;
-            list.innerHTML = settings.contacts.map(contact => `
-                <div class="flex items-center justify-between gap-3 rounded border border-stone-800 bg-black/35 p-3">
-                    <div>
-                        <p class="text-sm font-bold">${contact.label}</p>
-                        <p class="text-xs text-stone-400">${contact.value}</p>
-                    </div>
-                    <div class="shrink-0">
-                        <button onclick="editContact(${contact.id})" class="text-blue-400 text-xs uppercase tracking-wider mr-2">Editar</button>
-                        <button onclick="deleteContact(${contact.id})" class="text-red-400 text-xs uppercase tracking-wider">Remover</button>
-                    </div>
-                </div>
-            `).join("");
-        }
-
-        function saveContact(event) {
-            event.preventDefault();
-            const id = document.getElementById("adm-contact-id").value;
-            const contact = {
-                id: id ? Number(id) : Date.now(),
-                label: document.getElementById("adm-contact-label").value.trim(),
-                value: document.getElementById("adm-contact-value").value.trim()
-            };
-
-            if (id) {
-                settings.contacts = settings.contacts.map(item => item.id === Number(id) ? contact : item);
-                document.getElementById("btn-save-contact").textContent = "Adicionar Contato";
-            } else {
-                settings.contacts.push(contact);
-            }
-
-            document.getElementById("form-contact").reset();
-            document.getElementById("adm-contact-id").value = "";
-            saveSettingsToStorage();
-            renderAdminContacts();
-        }
-
-        function editContact(id) {
-            const contact = settings.contacts.find(item => item.id === id);
-            if (!contact) return;
-            document.getElementById("adm-contact-id").value = contact.id;
-            document.getElementById("adm-contact-label").value = contact.label;
-            document.getElementById("adm-contact-value").value = contact.value;
-            document.getElementById("btn-save-contact").textContent = "Salvar Contato";
-        }
-
-        function deleteContact(id) {
-            if (!confirm("Remover este contato?")) return;
-            settings.contacts = settings.contacts.filter(item => item.id !== id);
-            saveSettingsToStorage();
-            renderAdminContacts();
-        }
-
-        function renderAdminPayments() {
-            const list = document.getElementById("admin-payment-list");
-            if (!list) return;
-            list.innerHTML = settings.paymentMethods.map((method, index) => `
-                <div class="flex items-center justify-between gap-3 rounded border border-stone-800 bg-black/35 p-3">
-                    <p class="text-sm font-bold">${method}</p>
-                    <div class="shrink-0">
-                        <button onclick="editPaymentMethod(${index})" class="text-blue-400 text-xs uppercase tracking-wider mr-2">Editar</button>
-                        <button onclick="deletePaymentMethod(${index})" class="text-red-400 text-xs uppercase tracking-wider">Remover</button>
-                    </div>
-                </div>
-            `).join("");
-        }
-
-        function savePaymentMethod(event) {
-            event.preventDefault();
-            const index = document.getElementById("adm-payment-index").value;
-            const method = document.getElementById("adm-payment-name").value.trim();
-            if (!method) return;
-
-            if (index !== "") {
-                settings.paymentMethods[Number(index)] = method;
-                document.getElementById("btn-save-payment").textContent = "Adicionar Pagamento";
-            } else {
-                settings.paymentMethods.push(method);
-            }
-
-            document.getElementById("form-payment").reset();
-            document.getElementById("adm-payment-index").value = "";
-            saveSettingsToStorage();
-            renderAdminPayments();
-        }
-
-        function editPaymentMethod(index) {
-            document.getElementById("adm-payment-index").value = index;
-            document.getElementById("adm-payment-name").value = settings.paymentMethods[index];
-            document.getElementById("btn-save-payment").textContent = "Salvar Pagamento";
-        }
-
-        function deletePaymentMethod(index) {
-            if (!confirm("Remover esta forma de pagamento?")) return;
-            settings.paymentMethods.splice(index, 1);
-            saveSettingsToStorage();
-            renderAdminPayments();
+            showToast("Configurações Salvas");
         }
 
         function renderAdminProducts() {
-            const tbody = document.getElementById("admin-product-list");
-            tbody.innerHTML = "";
+            const tbody = document.getElementById('admin-product-list');
+            tbody.innerHTML = '';
             products.forEach(p => {
                 tbody.innerHTML += `
-                    <tr class="border-b border-stone-800">
-                        <td class="py-2"><img src="${p.img}" class="w-8 h-8 rounded-full object-cover"></td>
-                        <td class="font-bold text-xs uppercase tracking-wider">${p.name}</td>
-                        <td class="text-stone-400 text-xs">${normalizeCategory(p.category)}</td>
-                        <td class="text-sm">R$ ${p.price.toFixed(2)}</td>
-                        <td class="text-right gap-2">
-                            <button onclick="editProduct(${p.id})" class="text-blue-400 text-xs uppercase tracking-wider mr-2">Editar</button>
-                            <button onclick="deleteProduct(${p.id})" class="text-red-400 text-xs uppercase tracking-wider">Remover</button>
+                    <tr class="border-b border-gray-800/50 hover:bg-white/[0.02]">
+                        <td class="py-3"><img src="${p.img}" class="w-10 h-6 object-cover rounded-sm"></td>
+                        <td class="text-white text-xs font-serif uppercase tracking-wider">${p.name}</td>
+                        <td class="text-xs text-gray-500 uppercase">${p.category}</td>
+                        <td class="text-xs text-akira-gold">R$ ${p.price.toFixed(2)}</td>
+                        <td class="text-right">
+                            <button onclick="editProduct(${p.id})" class="text-gray-400 hover:text-white text-[10px] uppercase tracking-widest mr-3">Editar</button>
+                            <button onclick="deleteProduct(${p.id})" class="text-akira-red hover:text-red-400 text-[10px] uppercase tracking-widest">Excluir</button>
                         </td>
                     </tr>
                 `;
             });
+            buildCategories(); // Atualiza filtros do menu caso categorias mudem
         }
 
-        function setupImageUploadPreview() {
-            const input = document.getElementById("adm-prod-img");
-            if (!input) return;
-
-            input.addEventListener("change", () => {
-                const file = input.files && input.files[0];
-                if (!file) {
-                    updateImagePreview(document.getElementById("adm-prod-current-img").value, "Imagem atual mantida");
-                    return;
-                }
-
-                const previewUrl = URL.createObjectURL(file);
-                updateImagePreview(previewUrl, file.name);
-            });
-        }
-
-        function updateImagePreview(src, text = "Imagem selecionada") {
-            const preview = document.getElementById("adm-prod-img-preview");
-            const photo = document.getElementById("adm-prod-img-preview-photo");
-            const label = document.getElementById("adm-prod-img-preview-text");
-
-            if (!src) {
-                preview.classList.add("hidden");
-                preview.classList.remove("flex");
-                photo.src = "";
-                label.textContent = "";
-                return;
-            }
-
-            photo.src = src;
-            label.textContent = text;
-            preview.classList.remove("hidden");
-            preview.classList.add("flex");
-        }
-
-        function readImageFileAsDataUrl(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = () => reject(new Error("Não foi possível carregar a imagem."));
-                reader.readAsDataURL(file);
-            });
-        }
-
-        async function saveProduct(e) {
+        function saveProduct(e) {
             e.preventDefault();
-            const idVal = document.getElementById("adm-prod-id").value;
-            const imageInput = document.getElementById("adm-prod-img");
-            const currentImage = document.getElementById("adm-prod-current-img").value;
-            const selectedImage = imageInput.files && imageInput.files[0];
-
-            if (!idVal && !selectedImage) {
-                alert("Por favor, selecione uma imagem do produto.");
-                return;
-            }
-
-            const imageSrc = selectedImage ? await readImageFileAsDataUrl(selectedImage) : currentImage;
+            const idVal = document.getElementById('adm-prod-id').value;
             const newProd = {
                 id: idVal ? parseInt(idVal) : Date.now(),
-                name: document.getElementById("adm-prod-name").value,
-                price: parseFloat(document.getElementById("adm-prod-price").value),
-                category: document.getElementById("adm-prod-cat").value,
-                img: imageSrc,
-                desc: document.getElementById("adm-prod-desc").value
+                name: document.getElementById('adm-prod-name').value,
+                price: parseFloat(document.getElementById('adm-prod-price').value),
+                category: document.getElementById('adm-prod-cat').value,
+                weight: document.getElementById('adm-prod-weight').value,
+                img: document.getElementById('adm-prod-img').value,
+                desc: document.getElementById('adm-prod-desc').value
             };
 
-            if (idVal) {
+            if(idVal) {
                 const idx = products.findIndex(p => p.id === parseInt(idVal));
                 products[idx] = newProd;
-                document.getElementById("btn-save-prod").textContent = "Adicionar Produto";
+                document.getElementById('btn-save-prod').textContent = 'Adicionar';
             } else {
                 products.push(newProd);
             }
 
-            localStorage.setItem("products", JSON.stringify(products));
-            document.getElementById("form-product").reset();
-            document.getElementById("adm-prod-id").value = "";
-            document.getElementById("adm-prod-current-img").value = "";
-            updateImagePreview("");
+            localStorage.setItem('products', JSON.stringify(products));
+            document.getElementById('form-product').reset();
+            document.getElementById('adm-prod-id').value = '';
             renderAdminProducts();
-            renderHouseHighlights();
+            showToast("Catálogo Atualizado");
+            
+            // Re-render menu se estiver visível
+            if(!document.getElementById('page-menu').classList.contains('hidden')) renderMenu();
         }
 
         function editProduct(id) {
             const p = products.find(prod => prod.id === id);
-            document.getElementById("adm-prod-id").value = p.id;
-            document.getElementById("adm-prod-name").value = p.name;
-            document.getElementById("adm-prod-price").value = p.price;
-            document.getElementById("adm-prod-cat").value = normalizeCategory(p.category);
-            document.getElementById("adm-prod-img").value = "";
-            document.getElementById("adm-prod-current-img").value = p.img;
-            updateImagePreview(p.img, "Imagem atual. Selecione outra para trocar.");
-            document.getElementById("adm-prod-desc").value = p.desc;
-            document.getElementById("btn-save-prod").textContent = "Salvar Alteração";
-            window.scrollTo(0, 0);
+            document.getElementById('adm-prod-id').value = p.id;
+            document.getElementById('adm-prod-name').value = p.name;
+            document.getElementById('adm-prod-price').value = p.price;
+            document.getElementById('adm-prod-cat').value = p.category;
+            document.getElementById('adm-prod-weight').value = p.weight || '';
+            document.getElementById('adm-prod-img').value = p.img || '';
+            document.getElementById('adm-prod-desc').value = p.desc || '';
+            document.getElementById('btn-save-prod').textContent = 'Salvar Edição';
         }
 
         function deleteProduct(id) {
-            if (confirm("Tem certeza que deseja remover este produto?")) {
+            if(confirm("Confirma a exclusão deste item?")) {
                 products = products.filter(p => p.id !== id);
-                localStorage.setItem("products", JSON.stringify(products));
+                localStorage.setItem('products', JSON.stringify(products));
                 renderAdminProducts();
-                renderHouseHighlights();
             }
         }
     </script>
