@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akira Sushi - Painel Administrativo</title>
+    
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Ícones (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Configuração do Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        akira: {
+                            bg: '#0a0a0a',
+                            panel: '#151515',
+                            panelHover: '#1f1f1f',
+                            gold: '#d4af37',
+                            goldDim: '#9e8125',
+                            red: '#cc0000',
+                            redHover: '#a30000',
+                            text: '#a0a0a0',
+                            border: '#333333'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Cinzel', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+        
+        /* Ocultar input de arquivo padrão */
+        input[type="file"] { display: none; }
+    </style>
+</head>
+<body class="bg-akira-bg text-gray-200 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- TELA DE LOGIN -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-akira-bg bg-opacity-95">
+        <div class="bg-akira-panel p-8 rounded-lg border border-akira-border shadow-2xl w-full max-w-md text-center">
+            <h1 class="font-serif text-3xl text-akira-gold mb-2">Akira Sushi</h1>
+            <p class="text-sm text-akira-text mb-8 uppercase tracking-widest">Acesso Administrativo</p>
+            
+            <form id="login-form" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Usuário</label>
+                    <input type="text" id="login-user" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:outline-none focus:border-akira-gold transition-colors" placeholder="Ex: ADM123" required>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Senha</label>
+                    <input type="password" id="login-pass" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:outline-none focus:border-akira-gold transition-colors" placeholder="Ex: Login@123" required>
+                </div>
+                <button type="submit" class="w-full bg-akira-red hover:bg-akira-redHover text-white font-semibold py-3 rounded mt-4 transition-colors">
+                    Entrar
+                </button>
+                <p id="login-error" class="text-akira-red text-sm mt-2 text-center hidden">Credenciais inválidas.</p>
+            </form>
+            <a href="index.html" class="inline-flex items-center justify-center gap-2 mt-6 text-sm text-akira-gold hover:text-white transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar para a loja
+            </a>
+        </div>
+    </div>
+
+    <!-- PAINEL PRINCIPAL (Oculto até o login) -->
+    <div id="admin-dashboard" class="hidden flex-1 flex flex-col md:flex-row overflow-hidden h-screen">
+        
+        <!-- SIDEBAR -->
+        <aside class="w-full md:w-64 bg-akira-panel border-r border-akira-border flex flex-col h-auto md:h-full shrink-0">
+            <div class="p-6 border-b border-akira-border text-center md:text-left">
+                <h2 class="font-serif text-2xl text-akira-gold">Admin</h2>
+                <p class="text-xs text-akira-text">Gerenciamento Akira</p>
+            </div>
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto flex md:block overflow-x-auto md:overflow-x-visible">
+                <button onclick="switchTab('tab-settings')" id="nav-settings" class="nav-btn w-full flex items-center gap-3 p-3 rounded text-left hover:bg-akira-panelHover transition-colors text-akira-gold bg-akira-panelHover">
+                    <i data-lucide="settings" class="w-5 h-5"></i> <span class="hidden md:inline">Configurações</span>
+                </button>
+                <button onclick="switchTab('tab-products')" id="nav-products" class="nav-btn w-full flex items-center gap-3 p-3 rounded text-left hover:bg-akira-panelHover transition-colors text-gray-400">
+                    <i data-lucide="utensils" class="w-5 h-5"></i> <span class="hidden md:inline">Produtos</span>
+                </button>
+                <button onclick="switchTab('tab-contacts')" id="nav-contacts" class="nav-btn w-full flex items-center gap-3 p-3 rounded text-left hover:bg-akira-panelHover transition-colors text-gray-400">
+                    <i data-lucide="link" class="w-5 h-5"></i> <span class="hidden md:inline">Contatos Sociais</span>
+                </button>
+                <button onclick="switchTab('tab-payments')" id="nav-payments" class="nav-btn w-full flex items-center gap-3 p-3 rounded text-left hover:bg-akira-panelHover transition-colors text-gray-400">
+                    <i data-lucide="credit-card" class="w-5 h-5"></i> <span class="hidden md:inline">Pagamentos</span>
+                </button>
+            </nav>
+            <div class="p-4 border-t border-akira-border">
+                <a href="index.html" class="w-full flex items-center justify-center gap-2 p-2 rounded text-akira-gold hover:bg-black transition-colors mb-2">
+                    <i data-lucide="store" class="w-4 h-4"></i> Ver loja
+                </a>
+                <button onclick="logout()" class="w-full flex items-center justify-center gap-2 p-2 rounded text-akira-red hover:bg-black transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 bg-akira-bg overflow-y-auto p-6 md:p-10 relative">
+            
+            <!-- ABA: CONFIGURAÇÕES DA LOJA -->
+            <section id="tab-settings" class="tab-content block max-w-4xl mx-auto">
+                <div class="mb-8 border-b border-akira-border pb-4">
+                    <h2 class="text-3xl font-serif text-white">Configurações da Loja</h2>
+                    <p class="text-akira-text mt-1">Gerencie informações gerais, horários e acessos.</p>
+                </div>
+
+                <form id="settings-form" class="space-y-6">
+                    <!-- Infos Básicas -->
+                    <div class="bg-akira-panel p-6 rounded-lg border border-akira-border">
+                        <h3 class="text-xl text-akira-gold mb-4 font-serif">Informações Principais</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">WhatsApp de Pedidos</label>
+                                <input type="text" id="set-whatsapp" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:border-akira-gold" placeholder="Ex: 5511999999999">
+                                <p class="text-xs text-gray-500 mt-1">Apenas números, com código do país (55).</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Endereço da Loja</label>
+                                <input type="text" id="set-address" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:border-akira-gold" placeholder="Ex: Rua das Flores, 123 - Centro">
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <label class="block text-sm text-gray-400 mb-2">Imagem principal da loja</label>
+                            <input type="file" id="set-hero-file" accept="image/*" onchange="handleHeroImageUpload(event)">
+                            <input type="hidden" id="set-hero-image">
+                            <div class="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4 items-start">
+                                <div class="h-32 bg-black border border-akira-border rounded overflow-hidden cursor-pointer group relative" onclick="document.getElementById('set-hero-file').click()">
+                                    <img id="set-hero-preview" src="" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-xs uppercase tracking-widest text-akira-gold">
+                                        Trocar imagem
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <input type="url" id="set-hero-url" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:border-akira-gold" placeholder="Cole uma URL de imagem ou envie uma foto">
+                                    <div class="flex flex-wrap gap-3">
+                                        <button type="button" onclick="applyHeroImageUrl()" class="bg-akira-panelHover hover:bg-akira-border text-white px-4 py-2 rounded text-sm transition">
+                                            Usar URL
+                                        </button>
+                                        <button type="button" onclick="resetHeroImage()" class="text-gray-400 hover:text-white px-4 py-2 rounded text-sm transition">
+                                            Restaurar padrão
+                                        </button>
+                                    </div>
+                                    <p class="text-xs text-gray-500">Use imagens leves para não ocupar demais o armazenamento do navegador.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Horários -->
+                    <div class="bg-akira-panel p-6 rounded-lg border border-akira-border">
+                        <h3 class="text-xl text-akira-gold mb-4 font-serif">Horário de Atendimento</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Abertura</label>
+                                <input type="time" id="set-time-open" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:border-akira-gold">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Fechamento</label>
+                                <input type="time" id="set-time-close" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:border-akira-gold">
+                            </div>
+                        </div>
+                        <label class="block text-sm text-gray-400 mb-2">Dias de Funcionamento</label>
+                        <div class="flex flex-wrap gap-3" id="days-container">
+                            <!-- Checkboxes gerados via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Credenciais -->
+                    <div class="bg-akira-panel p-6 rounded-lg border border-akira-border">
+                        <h3 class="text-xl text-akira-gold mb-4 font-serif">Credenciais de Acesso (Admin)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Usuário de Login</label>
+                                <input type="text" id="set-user" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:border-akira-gold">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Senha de Login</label>
+                                <input type="text" id="set-pass" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:border-akira-gold">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit" class="bg-akira-gold hover:bg-akira-goldDim text-black font-bold py-3 px-8 rounded transition-colors flex items-center gap-2">
+                            <i data-lucide="save" class="w-5 h-5"></i> Salvar Configurações
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- ABA: PRODUTOS -->
+            <section id="tab-products" class="tab-content hidden max-w-5xl mx-auto">
+                <div class="mb-8 border-b border-akira-border pb-4 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-3xl font-serif text-white">Cardápio</h2>
+                        <p class="text-akira-text mt-1">Gerencie os pratos e produtos da sua loja.</p>
+                    </div>
+                    <button onclick="resetProductForm()" class="bg-akira-panel hover:bg-akira-border text-white px-4 py-2 rounded text-sm transition flex items-center gap-2 border border-akira-border">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Novo Prato
+                    </button>
+                </div>
+
+                <!-- Formulário de Produto -->
+                <div class="bg-akira-panel p-6 rounded-lg border border-akira-border mb-8 shadow-lg">
+                    <h3 id="prod-form-title" class="text-xl text-akira-gold mb-4 font-serif">Adicionar Novo Produto</h3>
+                    <form id="product-form" class="space-y-4">
+                        <input type="hidden" id="prod-id">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Foto do Produto -->
+                            <div class="md:col-span-1 flex flex-col items-center justify-center border-2 border-dashed border-akira-border rounded-lg p-4 bg-black relative hover:border-akira-gold transition-colors cursor-pointer" onclick="document.getElementById('prod-img-file').click()">
+                                <input type="file" id="prod-img-file" accept="image/*" onchange="handleImageUpload(event)">
+                                <input type="hidden" id="prod-img-base64">
+                                <img id="prod-img-preview" src="" class="hidden w-full h-40 object-cover rounded mb-2">
+                                <div id="prod-img-placeholder" class="text-center text-gray-500">
+                                    <i data-lucide="image-plus" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>
+                                    <p class="text-xs">Clique para fazer upload da Imagem</p>
+                                </div>
+                            </div>
+
+                            <!-- Dados do Produto -->
+                            <div class="md:col-span-2 space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm text-gray-400 mb-1">Nome do Prato/Produto *</label>
+                                        <input type="text" id="prod-name" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:border-akira-gold" required>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm text-gray-400 mb-1">Preço (R$) *</label>
+                                        <input type="number" step="0.01" id="prod-price" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:border-akira-gold" required>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm text-gray-400 mb-1">Categoria *</label>
+                                        <select id="prod-category" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:border-akira-gold" required>
+                                            <option value="">Selecione...</option>
+                                            <option value="Entradas">Entradas</option>
+                                            <option value="Temakis">Temakis</option>
+                                            <option value="Sushis e Sashimis">Sushis e Sashimis</option>
+                                            <option value="Hot Rolls">Hot Rolls</option>
+                                            <option value="Combos">Combos</option>
+                                            <option value="Bebidas">Bebidas</option>
+                                            <option value="Sobremesas">Sobremesas</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm text-gray-400 mb-1">Quantidade / Unidades / Peso</label>
+                                        <input type="text" id="prod-qty" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:border-akira-gold" placeholder="Ex: 10 peças, 300g, 1 unidade">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Descrição</label>
+                            <textarea id="prod-desc" rows="3" class="w-full bg-black border border-akira-border rounded p-3 text-white focus:border-akira-gold" placeholder="Ingredientes e detalhes do prato..."></textarea>
+                        </div>
+
+                        <div class="flex justify-end gap-3 pt-2">
+                            <button type="button" onclick="resetProductForm()" class="px-6 py-2 rounded text-gray-400 hover:text-white transition">Cancelar</button>
+                            <button type="submit" id="prod-btn-save" class="bg-akira-red hover:bg-akira-redHover text-white font-bold py-2 px-8 rounded transition-colors flex items-center gap-2">
+                                Salvar Produto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Lista de Produtos Cadastrados -->
+                <div class="bg-akira-panel rounded-lg border border-akira-border overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-black text-akira-gold border-b border-akira-border text-sm">
+                                    <th class="p-4 font-serif">Imagem</th>
+                                    <th class="p-4 font-serif">Nome do Prato</th>
+                                    <th class="p-4 font-serif">Categoria</th>
+                                    <th class="p-4 font-serif">Preço</th>
+                                    <th class="p-4 font-serif text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body" class="text-sm divide-y divide-akira-border">
+                                <!-- Preenchido via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ABA: CONTATOS -->
+            <section id="tab-contacts" class="tab-content hidden max-w-4xl mx-auto">
+                <div class="mb-8 border-b border-akira-border pb-4">
+                    <h2 class="text-3xl font-serif text-white">Contatos e Redes Sociais</h2>
+                    <p class="text-akira-text mt-1">Gerencie os links que aparecem no rodapé ou na página de contatos.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Form Contato -->
+                    <div class="md:col-span-1 bg-akira-panel p-6 rounded-lg border border-akira-border h-fit">
+                        <h3 class="text-xl text-akira-gold mb-4 font-serif">Adicionar Contato</h3>
+                        <form id="contact-form" class="space-y-4">
+                            <input type="hidden" id="cont-id">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Tipo / Rede</label>
+                                <select id="cont-type" class="w-full bg-black border border-akira-border rounded p-3 text-white" required>
+                                    <option value="Instagram">Instagram</option>
+                                    <option value="Facebook">Facebook</option>
+                                    <option value="Telefone">Telefone / Fixo</option>
+                                    <option value="Email">E-mail</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Link ou Número</label>
+                                <input type="text" id="cont-val" class="w-full bg-black border border-akira-border rounded p-3 text-white" placeholder="https://..." required>
+                            </div>
+                            <button type="submit" class="w-full bg-akira-gold hover:bg-akira-goldDim text-black font-bold py-2 rounded transition-colors">
+                                Salvar Contato
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Lista Contatos -->
+                    <div class="md:col-span-2">
+                        <div class="bg-akira-panel rounded-lg border border-akira-border p-4">
+                            <ul id="contacts-list" class="divide-y divide-akira-border">
+                                <!-- Preenchido via JS -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ABA: PAGAMENTOS -->
+            <section id="tab-payments" class="tab-content hidden max-w-4xl mx-auto">
+                <div class="mb-8 border-b border-akira-border pb-4">
+                    <h2 class="text-3xl font-serif text-white">Formas de Pagamento</h2>
+                    <p class="text-akira-text mt-1">Defina quais métodos de pagamento a loja aceita.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Form Pagamento -->
+                    <div class="md:col-span-1 bg-akira-panel p-6 rounded-lg border border-akira-border h-fit">
+                        <h3 class="text-xl text-akira-gold mb-4 font-serif">Adicionar Pagamento</h3>
+                        <form id="payment-form" class="space-y-4">
+                            <input type="hidden" id="pay-id">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Nome (Ex: Pix, Cartão de Crédito)</label>
+                                <input type="text" id="pay-name" class="w-full bg-black border border-akira-border rounded p-3 text-white" required>
+                            </div>
+                            <button type="submit" class="w-full bg-akira-gold hover:bg-akira-goldDim text-black font-bold py-2 rounded transition-colors">
+                                Salvar Pagamento
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Lista Pagamentos -->
+                    <div class="md:col-span-2">
+                        <div class="bg-akira-panel rounded-lg border border-akira-border p-4 flex flex-wrap gap-4" id="payments-list">
+                            <!-- Preenchido via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 bg-akira-panel border border-akira-gold text-white px-6 py-3 rounded shadow-lg z-50 flex items-center gap-3">
+        <i data-lucide="check-circle" class="text-akira-gold w-5 h-5"></i>
+        <span id="toast-msg">Sucesso!</span>
+    </div>
+
+    <!-- SCRIPT DE GERENCIAMENTO -->
+    <script>
+        // INICIALIZAÇÃO E ÍCONES
+        lucide.createIcons();
+
+        function readJson(key, fallback) {
+            try {
+                return JSON.parse(localStorage.getItem(key)) || fallback;
+            } catch (error) {
+                return fallback;
+            }
+        }
+
+        const defaultAdminSettings = {
+            user: 'ADM123',
+            pass: 'Login@123',
+            whatsapp: '5511999999999',
+            address: 'Rua Exemplo, 123 - Centro',
+            timeOpen: '18:00',
+            timeClose: '23:30',
+            heroImage: 'https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=1000&auto=format&fit=crop',
+            days: ['Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
+        };
+
+        const savedStoreSettings = readJson('settings', {});
+        const savedAdminSettings = readJson('akira_settings', {});
+
+        // ESTADOS (Carregados do LocalStorage)
+        let appSettings = {
+            ...defaultAdminSettings,
+            ...savedAdminSettings,
+            whatsapp: savedAdminSettings.whatsapp || savedStoreSettings.whatsapp || defaultAdminSettings.whatsapp,
+            timeOpen: savedAdminSettings.timeOpen || savedStoreSettings.openHour || defaultAdminSettings.timeOpen,
+            timeClose: savedAdminSettings.timeClose || savedStoreSettings.closeHour || defaultAdminSettings.timeClose,
+            heroImage: savedAdminSettings.heroImage || savedStoreSettings.heroImage || defaultAdminSettings.heroImage
+        };
+
+        // Mantendo a compatibilidade de chave "products" com o arquivo index.html que o usuário enviou
+        let products = readJson('products', []);
+        let contacts = readJson('akira_contacts', [
+            { id: 1, type: 'Instagram', val: '@akirasushi' }
+        ]);
+        let payments = readJson('akira_payments', (savedStoreSettings.paymentMethods || ['Pix', 'Cartão de Crédito']).map((name, index) => ({
+            id: index + 1,
+            name
+        })));
+
+        const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+
+        // CONTROLE DE LOGIN
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const u = document.getElementById('login-user').value;
+            const p = document.getElementById('login-pass').value;
+            
+            if (u === appSettings.user && p === appSettings.pass) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                sessionStorage.setItem('akira_logged', 'true');
+                initAdmin();
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        });
+
+        function logout() {
+            sessionStorage.removeItem('akira_logged');
+            window.location.reload();
+        }
+
+        // Verifica se já está logado na sessão
+        if (sessionStorage.getItem('akira_logged') === 'true') {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+            initAdmin();
+        }
+
+        // INICIALIZA DADOS DA TELA ADMIN
+        function initAdmin() {
+            populateSettings();
+            renderProducts();
+            renderContacts();
+            renderPayments();
+        }
+
+        // NAVEGAÇÃO DE ABAS
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            // Estilizar botões
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-akira-gold', 'bg-akira-panelHover');
+                btn.classList.add('text-gray-400');
+            });
+            const activeBtn = document.getElementById('nav-' + tabId.replace('tab-', ''));
+            activeBtn.classList.remove('text-gray-400');
+            activeBtn.classList.add('text-akira-gold', 'bg-akira-panelHover');
+        }
+
+        // FUNÇÃO DE TOAST (Notificações)
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function syncStoreSettings() {
+            localStorage.setItem('akira_settings', JSON.stringify(appSettings));
+            localStorage.setItem('settings', JSON.stringify({
+                ...readJson('settings', {}),
+                storeName: readJson('settings', {}).storeName || 'AKIRA SUSHI',
+                whatsapp: appSettings.whatsapp,
+                openHour: appSettings.timeOpen,
+                closeHour: appSettings.timeClose,
+                heroImage: appSettings.heroImage,
+                paymentMethods: payments.map(payment => payment.name)
+            }));
+        }
+
+        function syncPayments() {
+            localStorage.setItem('akira_payments', JSON.stringify(payments));
+            syncStoreSettings();
+        }
+
+        // ==========================================
+        // MÓDULO 1: CONFIGURAÇÕES DA LOJA
+        // ==========================================
+        function populateSettings() {
+            document.getElementById('set-whatsapp').value = appSettings.whatsapp || '';
+            document.getElementById('set-address').value = appSettings.address || '';
+            document.getElementById('set-time-open').value = appSettings.timeOpen || '';
+            document.getElementById('set-time-close').value = appSettings.timeClose || '';
+            document.getElementById('set-user').value = appSettings.user || '';
+            document.getElementById('set-pass').value = appSettings.pass || '';
+            updateHeroPreview(appSettings.heroImage || defaultAdminSettings.heroImage);
+
+            const daysContainer = document.getElementById('days-container');
+            daysContainer.innerHTML = '';
+            daysOfWeek.forEach(day => {
+                const isChecked = appSettings.days.includes(day) ? 'checked' : '';
+                daysContainer.innerHTML += `
+                    <label class="flex items-center gap-2 bg-black border border-akira-border px-3 py-2 rounded cursor-pointer hover:border-gray-500">
+                        <input type="checkbox" name="work-days" value="${day}" class="accent-akira-gold" ${isChecked}>
+                        <span class="text-sm">${day}</span>
+                    </label>
+                `;
+            });
+        }
+
+        document.getElementById('settings-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const selectedDays = Array.from(document.querySelectorAll('input[name="work-days"]:checked')).map(cb => cb.value);
+            
+            appSettings = {
+                whatsapp: document.getElementById('set-whatsapp').value,
+                address: document.getElementById('set-address').value,
+                timeOpen: document.getElementById('set-time-open').value,
+                timeClose: document.getElementById('set-time-close').value,
+                heroImage: document.getElementById('set-hero-image').value || defaultAdminSettings.heroImage,
+                user: document.getElementById('set-user').value,
+                pass: document.getElementById('set-pass').value,
+                days: selectedDays
+            };
+            
+            syncStoreSettings();
+            showToast('Configurações salvas com sucesso!');
+        });
+
+        function updateHeroPreview(src) {
+            const imageSrc = src || defaultAdminSettings.heroImage;
+            document.getElementById('set-hero-image').value = imageSrc;
+            document.getElementById('set-hero-url').value = imageSrc.startsWith('data:') ? '' : imageSrc;
+            document.getElementById('set-hero-preview').src = imageSrc;
+        }
+
+        function applyHeroImageUrl() {
+            const url = document.getElementById('set-hero-url').value.trim();
+            if (!url) return;
+            updateHeroPreview(url);
+            appSettings.heroImage = url;
+            syncStoreSettings();
+            showToast('Imagem principal atualizada!');
+        }
+
+        function resetHeroImage() {
+            updateHeroPreview(defaultAdminSettings.heroImage);
+            appSettings.heroImage = defaultAdminSettings.heroImage;
+            syncStoreSettings();
+            showToast('Imagem padrão restaurada.');
+        }
+
+        function handleHeroImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > 700000) {
+                alert("Atenção: imagem muito grande. Tente usar uma imagem com menos de 700kb para não lotar a memória do navegador.");
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                updateHeroPreview(e.target.result);
+                appSettings.heroImage = e.target.result;
+                syncStoreSettings();
+                showToast('Imagem principal atualizada!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ==========================================
+        // MÓDULO 2: GERENCIADOR DE PRODUTOS
+        // ==========================================
+        
+        // Conversão de Imagem para Base64
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Checa tamanho para não estourar o LocalStorage (Limite ~5MB) - Idealmente < 500kb
+                if(file.size > 500000) {
+                    alert("Atenção: Imagem muito grande. Tente imagens com menos de 500kb para não lotar a memória do navegador.");
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('prod-img-preview').src = e.target.result;
+                    document.getElementById('prod-img-preview').classList.remove('hidden');
+                    document.getElementById('prod-img-placeholder').classList.add('hidden');
+                    document.getElementById('prod-img-base64').value = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function resetProductForm() {
+            document.getElementById('product-form').reset();
+            document.getElementById('prod-id').value = '';
+            document.getElementById('prod-img-preview').src = '';
+            document.getElementById('prod-img-preview').classList.add('hidden');
+            document.getElementById('prod-img-placeholder').classList.remove('hidden');
+            document.getElementById('prod-img-base64').value = '';
+            document.getElementById('prod-form-title').textContent = 'Adicionar Novo Produto';
+            document.getElementById('prod-btn-save').innerHTML = 'Salvar Produto';
+            
+            // Rolar para o form
+            document.getElementById('tab-products').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.getElementById('product-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('prod-id').value;
+            const newProd = {
+                id: id ? Number(id) : Date.now(), // Gera ID único se for novo
+                name: document.getElementById('prod-name').value,
+                price: parseFloat(document.getElementById('prod-price').value),
+                category: document.getElementById('prod-category').value,
+                weight: document.getElementById('prod-qty').value, // Qtd/Peso
+                desc: document.getElementById('prod-desc').value,
+                img: document.getElementById('prod-img-base64').value // Base64 da Imagem
+            };
+
+            if (id) {
+                // Atualiza
+                products = products.map(p => p.id === newProd.id ? newProd : p);
+                showToast('Produto atualizado!');
+            } else {
+                // Cria
+                products.push(newProd);
+                showToast('Produto adicionado!');
+            }
+
+            localStorage.setItem('products', JSON.stringify(products));
+            resetProductForm();
+            renderProducts();
+        });
+
+        function editProduct(id) {
+            const p = products.find(prod => prod.id === id);
+            if (!p) return;
+
+            document.getElementById('prod-id').value = p.id;
+            document.getElementById('prod-name').value = p.name;
+            document.getElementById('prod-price').value = p.price;
+            document.getElementById('prod-category').value = p.category;
+            document.getElementById('prod-qty').value = p.weight || '';
+            document.getElementById('prod-desc').value = p.desc || '';
+            
+            if (p.img) {
+                document.getElementById('prod-img-base64').value = p.img;
+                document.getElementById('prod-img-preview').src = p.img;
+                document.getElementById('prod-img-preview').classList.remove('hidden');
+                document.getElementById('prod-img-placeholder').classList.add('hidden');
+            } else {
+                document.getElementById('prod-img-base64').value = '';
+                document.getElementById('prod-img-preview').classList.add('hidden');
+                document.getElementById('prod-img-placeholder').classList.remove('hidden');
+            }
+
+            document.getElementById('prod-form-title').textContent = 'Editando: ' + p.name;
+            document.getElementById('prod-btn-save').innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Salvar Alterações';
+            lucide.createIcons();
+            
+            // Scroll para cima
+            document.getElementById('tab-products').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteProduct(id) {
+            if(confirm('Tem certeza que deseja excluir este produto do cardápio?')) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('products', JSON.stringify(products));
+                renderProducts();
+                showToast('Produto excluído.');
+            }
+        }
+
+        function renderProducts() {
+            const tbody = document.getElementById('products-table-body');
+            tbody.innerHTML = '';
+
+            if (products.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Nenhum produto cadastrado.</td></tr>`;
+                return;
+            }
+
+            // Agrupa ou apenas lista, aqui faremos uma lista simples ordenada por categoria
+            const sortedProducts = [...products].sort((a, b) => a.category.localeCompare(b.category));
+
+            sortedProducts.forEach(p => {
+                const imgTag = p.img 
+                    ? `<img src="${p.img}" class="w-12 h-12 object-cover rounded-full border border-akira-border">` 
+                    : `<div class="w-12 h-12 rounded-full bg-akira-bg border border-akira-border flex items-center justify-center text-xs text-gray-500">Sem Foto</div>`;
+                
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-akira-panelHover transition-colors";
+                tr.innerHTML = `
+                    <td class="p-4">${imgTag}</td>
+                    <td class="p-4">
+                        <div class="font-bold text-white">${p.name}</div>
+                        <div class="text-xs text-gray-400">${p.weight || ''}</div>
+                    </td>
+                    <td class="p-4"><span class="bg-black border border-akira-border px-2 py-1 rounded text-xs text-akira-gold">${p.category}</span></td>
+                    <td class="p-4 text-akira-red font-bold">R$ ${parseFloat(p.price).toFixed(2).replace('.', ',')}</td>
+                    <td class="p-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="editProduct(${p.id})" class="p-2 rounded bg-black hover:bg-akira-gold hover:text-black border border-akira-border transition text-gray-300" title="Editar">
+                                <i data-lucide="edit-2" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="deleteProduct(${p.id})" class="p-2 rounded bg-black hover:bg-akira-red text-akira-red hover:text-white border border-akira-border transition" title="Excluir">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        // ==========================================
+        // MÓDULO 3: GERENCIADOR DE CONTATOS
+        // ==========================================
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('cont-id').value;
+            const newCont = {
+                id: id ? Number(id) : Date.now(),
+                type: document.getElementById('cont-type').value,
+                val: document.getElementById('cont-val').value
+            };
+
+            if (id) {
+                contacts = contacts.map(c => c.id === newCont.id ? newCont : c);
+            } else {
+                contacts.push(newCont);
+            }
+
+            localStorage.setItem('akira_contacts', JSON.stringify(contacts));
+            this.reset();
+            document.getElementById('cont-id').value = '';
+            renderContacts();
+            showToast('Contato salvo!');
+        });
+
+        function editContact(id) {
+            const c = contacts.find(cont => cont.id === id);
+            document.getElementById('cont-id').value = c.id;
+            document.getElementById('cont-type').value = c.type;
+            document.getElementById('cont-val').value = c.val;
+        }
+
+        function deleteContact(id) {
+            if(confirm('Remover este contato?')) {
+                contacts = contacts.filter(c => c.id !== id);
+                localStorage.setItem('akira_contacts', JSON.stringify(contacts));
+                renderContacts();
+            }
+        }
+
+        function renderContacts() {
+            const list = document.getElementById('contacts-list');
+            list.innerHTML = '';
+            contacts.forEach(c => {
+                let icon = 'link';
+                if(c.type === 'Instagram') icon = 'instagram';
+                if(c.type === 'Facebook') icon = 'facebook';
+                if(c.type === 'Telefone') icon = 'phone';
+                if(c.type === 'Email') icon = 'mail';
+
+                list.innerHTML += `
+                    <li class="flex items-center justify-between p-4 hover:bg-black transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="${icon}" class="w-5 h-5 text-akira-gold"></i>
+                            <div>
+                                <p class="text-sm font-bold text-white">${c.type}</p>
+                                <p class="text-xs text-gray-400">${c.val}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editContact(${c.id})" class="text-gray-400 hover:text-white"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                            <button onclick="deleteContact(${c.id})" class="text-akira-red hover:text-white"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    </li>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // ==========================================
+        // MÓDULO 4: GERENCIADOR DE PAGAMENTOS
+        // ==========================================
+        document.getElementById('payment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('pay-id').value;
+            const newPay = {
+                id: id ? Number(id) : Date.now(),
+                name: document.getElementById('pay-name').value
+            };
+
+            if (id) {
+                payments = payments.map(p => p.id === newPay.id ? newPay : p);
+            } else {
+                payments.push(newPay);
+            }
+
+            syncPayments();
+            this.reset();
+            document.getElementById('pay-id').value = '';
+            renderPayments();
+            showToast('Forma de pagamento salva!');
+        });
+
+        function deletePayment(id) {
+            if(confirm('Remover esta forma de pagamento?')) {
+                payments = payments.filter(p => p.id !== id);
+                syncPayments();
+                renderPayments();
+            }
+        }
+
+        function renderPayments() {
+            const list = document.getElementById('payments-list');
+            list.innerHTML = '';
+            payments.forEach(p => {
+                list.innerHTML += `
+                    <div class="flex items-center justify-between bg-black border border-akira-border rounded p-3 min-w-[150px] group">
+                        <span class="text-sm text-white flex items-center gap-2">
+                            <i data-lucide="wallet" class="w-4 h-4 text-gray-500"></i> ${p.name}
+                        </span>
+                        <button onclick="deletePayment(${p.id})" class="text-gray-500 hover:text-akira-red opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
