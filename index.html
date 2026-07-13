@@ -105,7 +105,7 @@
 
         <!-- Right Nav -->
         <div class="flex items-center gap-6">
-            <button onclick="showAdminLogin()" class="text-gray-600 hover:text-akira-gold transition text-xs tracking-widest uppercase hidden sm:block">Adm</button>
+            <button onclick="showAdminLogin()" class="text-gray-600 hover:text-akira-gold transition text-xs tracking-widest uppercase">Adm</button>
             <button onclick="navigate('cart')" class="hover:text-akira-gold transition relative flex items-center justify-center group">
                 <span class="text-xs tracking-widest uppercase mr-2 hidden md:block group-hover:text-akira-gold text-gray-400">Carrinho</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 group-hover:text-akira-gold transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -141,7 +141,7 @@
             </div>
             <!-- Image Content -->
             <div class="w-full md:w-1/2 relative h-64 md:h-auto">
-                <img src="https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=1000&auto=format&fit=crop" alt="Sushi Bowl" class="absolute inset-0 w-full h-full object-cover">
+                <img id="hero-image" src="https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=1000&auto=format&fit=crop" alt="Sushi Bowl" class="absolute inset-0 w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-akira-bg via-transparent to-transparent md:bg-gradient-to-l"></div>
             </div>
         </div>
@@ -161,7 +161,9 @@
             </div>
             <div>
                 <h4 class="text-akira-gold font-serif mb-2 text-lg">Redes</h4>
-                <p class="text-gray-500 text-xs tracking-wide">@akirasushi.delivery</p>
+                <div id="display-socials" class="text-gray-500 text-xs tracking-wide space-y-1">
+                    <p>@akirasushi.delivery</p>
+                </div>
             </div>
         </div>
     </section>
@@ -365,6 +367,7 @@
             whatsapp: "5511999999999",
             openHour: "02:00",
             closeHour: "23:59",
+            heroImage: "https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=1000&auto=format&fit=crop",
             paymentMethods: ["Pix", "Cartão de Crédito", "Cartão de Débito", "Dinheiro"]
         };
 
@@ -380,8 +383,41 @@
             { id: 9, name: "Sushi Dog Salmão Cru", price: 52.90, category: "Especiais", weight: "1 un", img: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=200&q=80", desc: "Arroz empanado com recheio de salmão cru, cream cheese, cebola roxa." }
         ];
 
-        let settings = JSON.parse(localStorage.getItem('settings')) || defaultSettings;
-        let products = JSON.parse(localStorage.getItem('products')) || defaultProducts;
+        function readJson(key, fallback) {
+            try {
+                return JSON.parse(localStorage.getItem(key)) || fallback;
+            } catch (error) {
+                return fallback;
+            }
+        }
+
+        function getSharedSettings() {
+            const savedSettings = readJson('settings', {});
+            const adminSettings = readJson('akira_settings', {});
+            const adminPayments = readJson('akira_payments', []);
+            const paymentMethods = adminPayments.length
+                ? adminPayments.map(payment => payment.name).filter(Boolean)
+                : savedSettings.paymentMethods;
+
+            return {
+                ...defaultSettings,
+                ...savedSettings,
+                whatsapp: adminSettings.whatsapp || savedSettings.whatsapp || defaultSettings.whatsapp,
+                openHour: adminSettings.timeOpen || savedSettings.openHour || defaultSettings.openHour,
+                closeHour: adminSettings.timeClose || savedSettings.closeHour || defaultSettings.closeHour,
+                heroImage: adminSettings.heroImage || savedSettings.heroImage || defaultSettings.heroImage,
+                paymentMethods: paymentMethods && paymentMethods.length ? paymentMethods : defaultSettings.paymentMethods
+            };
+        }
+
+        let settings = getSharedSettings();
+        let products = readJson('products', defaultProducts);
+        let contacts = readJson('akira_contacts', [
+            { id: 1, type: 'Instagram', val: '@akirasushi.delivery' }
+        ]);
+        if (!localStorage.getItem('products')) {
+            localStorage.setItem('products', JSON.stringify(products));
+        }
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let currentFilter = 'Todos';
 
@@ -449,6 +485,50 @@
             document.getElementById('nav-logo').textContent = settings.storeName.split(' ')[0];
             document.getElementById('display-contact').textContent = settings.whatsapp;
             document.getElementById('display-hours').textContent = `${settings.openHour} às ${settings.closeHour}`;
+            document.getElementById('hero-image').src = settings.heroImage || defaultSettings.heroImage;
+            renderContacts();
+        }
+
+        function getContactUrl(contact) {
+            const value = (contact.val || '').trim();
+            if (!value) return '';
+            if (/^https?:\/\//i.test(value)) return value;
+            if (contact.type === 'Email') return `mailto:${value}`;
+            if (contact.type === 'Telefone') return `tel:${value.replace(/\D/g, '')}`;
+            if (contact.type === 'Instagram') return `https://instagram.com/${value.replace('@', '')}`;
+            if (contact.type === 'Facebook') return value.includes('facebook.com') ? value : `https://facebook.com/${value.replace('@', '')}`;
+            return '';
+        }
+
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[char]));
+        }
+
+        function renderContacts() {
+            contacts = readJson('akira_contacts', contacts);
+            const socials = document.getElementById('display-socials');
+            const validContacts = contacts.filter(contact => contact.val && contact.val.trim());
+
+            if (!validContacts.length) {
+                socials.innerHTML = '<p>@akirasushi.delivery</p>';
+                return;
+            }
+
+            socials.innerHTML = validContacts.map(contact => {
+                const url = getContactUrl(contact);
+                const safeUrl = escapeHtml(url);
+                const label = contact.type === 'Outro' ? contact.val : `${contact.type}: ${contact.val}`;
+                const safeLabel = escapeHtml(label);
+                return url
+                    ? `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="block hover:text-akira-gold transition">${safeLabel}</a>`
+                    : `<p>${safeLabel}</p>`;
+            }).join('');
         }
 
         // Filtros e Categorias Dinâmicas
@@ -684,7 +764,7 @@
         }
 
         // Admin
-        function showAdminLogin() { document.getElementById('login-modal').classList.remove('hidden'); }
+        function showAdminLogin() { window.location.href = 'painel_administrativo_akira_sushi.html'; }
 
         function authenticate() {
             const u = document.getElementById('login-user').value;
@@ -716,6 +796,13 @@
             settings.openHour = document.getElementById('adm-time-open').value;
             settings.closeHour = document.getElementById('adm-time-close').value;
             localStorage.setItem('settings', JSON.stringify(settings));
+            localStorage.setItem('akira_settings', JSON.stringify({
+                ...(readJson('akira_settings', {})),
+                whatsapp: settings.whatsapp,
+                timeOpen: settings.openHour,
+                timeClose: settings.closeHour,
+                heroImage: settings.heroImage
+            }));
             updateAppInfo();
             checkStoreStatus();
             showToast("Configurações Salvas");
